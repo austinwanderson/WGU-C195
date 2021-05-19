@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="620.0" prefWidth="953.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.Controller">
+   <children>
+      <TabPane prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Week View">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <children>
+                        <Label layoutX="132.0" layoutY="31.0" text="Monday" />
+                        <Label layoutX="232.0" layoutY="31.0" text="Tuesday" />
+                        <Label layoutX="323.0" layoutY="31.0" text="Wednesday" />
+                        <Label layoutX="431.0" layoutY="31.0" text="Thursday" />
+                        <Label layoutX="541.0" layoutY="31.0" text="Friday" />
+                        <Label layoutX="634.0" layoutY="31.0" text="Saturday" />
+                        <Label layoutX="30.0" layoutY="31.0" text="Sunday" />
+                        <GridPane fx:id="weekGrid" layoutY="50.0" prefHeight="539.0" prefWidth="711.0" style="-fx-background-color: white;">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;">
+                                 <children>
+                                    <Label fx:id="weekSundayDayLabel" alignment="CENTER" layoutX="1.0" layoutY="1.0" prefHeight="34.0" prefWidth="100.0" text="12/21">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="1">
+                                 <children>
+                                    <Label fx:id="weekMondayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/22">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="2">
+                                 <children>
+                                    <Label fx:id="weekTuesdayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/23">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="3">
+                                 <children>
+                                    <Label fx:id="weekWednesdayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/24">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="4">
+                                 <children>
+                                    <Label fx:id="weekThursdayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/25">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="5">
+                                 <children>
+                                    <Label fx:id="weekFridayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/26">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="112.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="6">
+                                 <children>
+                                    <Label fx:id="weekSaturdayDayLabel" alignment="CENTER" prefHeight="34.0" prefWidth="100.0" text="12/27">
+                                       <font>
+                                          <Font name="System Font" size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children></Pane>
+                              <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="501.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="112.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="500.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="214.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="501.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="316.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="501.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="418.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="503.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="519.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="501.0" prefWidth="100.0" />
+                                 </children></Pane>
+                              <Pane layoutX="620.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="6" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="503.0" prefWidth="100.0" />
+                                 </children></Pane>
+                           </children>
+                        </GridPane>
+                        <Accordion fx:id="weekAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="539.0" prefWidth="242.0">
+                          <panes>
+                            <TitledPane animated="false" text="untitled 1">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 2">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 3">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                        <Label fx:id="weekToWeekLabel" alignment="CENTER" layoutX="259.0" layoutY="5.0" prefHeight="23.0" prefWidth="194.0" text="12/21/21 - 12/27/21">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="nextWeekBtn" layoutX="454.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGoToNextWeek" prefHeight="19.0" prefWidth="15.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 20px;" text="&gt;">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="previousWeekBtn" layoutX="235.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGoToPreviousWeek" prefHeight="19.0" prefWidth="15.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 20px;" text="&lt;">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Month View">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="507.0" prefWidth="722.0" style="-fx-background-color: white;">
+                     <children>
+                        <GridPane fx:id="calendarGrid" layoutY="50.0" prefHeight="539.0" prefWidth="711.0" style="-fx-border-color: black;">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                          </columnConstraints>
+                          <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;">
+                                 <children>
+                                    <VBox layoutX="1.0" layoutY="-1.0" prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="370.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="230.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="157.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="459.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="181.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="181.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="181.0" layoutY="157.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="181.0" layoutY="230.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="181.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="215.0" layoutY="459.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="351.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="351.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="351.0" layoutY="230.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="351.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="351.0" layoutY="157.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="417.0" layoutY="459.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="157.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="230.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="96.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="113.0" layoutY="459.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="266.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="266.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="1">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="266.0" layoutY="157.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="2">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="266.0" layoutY="230.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="266.0" layoutY="303.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="4">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                              <Pane layoutX="316.0" layoutY="459.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="5">
+                                 <children>
+                                    <VBox prefHeight="119.0" prefWidth="100.0">
+                                       <children>
+                                          <Label alignment="CENTER" prefHeight="26.0" prefWidth="36.0" text="" textAlignment="CENTER" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </Pane>
+                           </children>
+                        </GridPane>
+                        <Label layoutX="132.0" layoutY="31.0" text="Monday" />
+                        <Label layoutX="232.0" layoutY="31.0" text="Tuesday" />
+                        <Label layoutX="323.0" layoutY="31.0" text="Wednesday" />
+                        <Label layoutX="431.0" layoutY="31.0" text="Thursday" />
+                        <Label layoutX="541.0" layoutY="31.0" text="Friday" />
+                        <Label layoutX="634.0" layoutY="31.0" text="Saturday" />
+                        <Label layoutX="30.0" layoutY="31.0" text="Sunday" />
+                        <Label fx:id="monthYearLabel" alignment="CENTER" layoutX="268.0" layoutY="5.0" prefHeight="23.0" prefWidth="176.0" text="September 2021">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                        </Label>
+                        <Button fx:id="nextMonthBtn" layoutX="454.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGoToNextMonth" prefHeight="19.0" prefWidth="15.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 20px;" text="&gt;">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="previousMonthBtn" layoutX="235.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleGoToPreviousMonth" prefHeight="19.0" prefWidth="15.0" style="-fx-background-color: white; -fx-border-color: black; -fx-border-radius: 20px;" text="&lt;">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                        <Accordion fx:id="monthAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="538.0" prefWidth="242.0">
+                          <panes>
+                            <TitledPane animated="false" text="untitled 1">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 2">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="untitled 3">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Manage Customers">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <children>
+                        <Button fx:id="addNewCustomerBtn" layoutX="29.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleAddNewCustomer" prefHeight="39.0" prefWidth="177.0" text="Add New Customer" />
+                        <Button fx:id="updateCustomerBtn" disable="true" layoutX="29.0" layoutY="171.0" mnemonicParsing="false" onAction="#handleUpdateCustomer" prefHeight="39.0" prefWidth="177.0" text="Update Customer" />
+                        <Button fx:id="deleteCustomerBtn" disable="true" layoutX="29.0" layoutY="244.0" mnemonicParsing="false" onAction="#handleDeleteCustomer" prefHeight="39.0" prefWidth="177.0" text="Delete Customer" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="42.0" layoutY="25.0" prefHeight="51.0" prefWidth="152.0" text="Select a customer from the list to update or delete." textAlignment="CENTER" wrapText="true" />
+                        <TableView fx:id="customerTable" layoutX="236.0" layoutY="39.0" prefHeight="508.0" prefWidth="686.0">
+                          <columns>
+                            <TableColumn prefWidth="145.0" text="Customer Name" />
+                              <TableColumn prefWidth="145.0" text="Address" />
+                              <TableColumn prefWidth="122.0" text="City" />
+                              <TableColumn prefWidth="64.0" text="State" />
+                              <TableColumn prefWidth="79.0" text="Zip" />
+                              <TableColumn prefWidth="130.0" text="Phone Number" />
+                          </columns>
+                        </TableView>
+                     </children></AnchorPane>
+               </content>
+            </Tab>
+            <Tab text="Manage Appointments">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <children>
+                        <Button fx:id="createApptBtn" layoutX="29.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleCreateNewAppt" prefHeight="39.0" prefWidth="177.0" text="Create New Appointment" />
+                        <Button fx:id="updateApptBtn" disable="true" layoutX="29.0" layoutY="171.0" mnemonicParsing="false" onAction="#handleUpdateAppt" prefHeight="39.0" prefWidth="177.0" text="Update Appointment" />
+                        <Button fx:id="deleteApptBtn" disable="true" layoutX="29.0" layoutY="244.0" mnemonicParsing="false" onAction="#handleDeleteAppt" prefHeight="39.0" prefWidth="177.0" text="Delete Appointment" />
+                        <Label alignment="CENTER" contentDisplay="CENTER" layoutX="42.0" layoutY="25.0" prefHeight="51.0" prefWidth="152.0" text="Select an appointment from the list to update or delete." textAlignment="CENTER" wrapText="true" />
+                        <TableView fx:id="apptTable" layoutX="236.0" layoutY="39.0" prefHeight="508.0" prefWidth="686.0">
+                           <columns>
+                              <TableColumn prefWidth="145.0" text="Title" />
+                              <TableColumn prefWidth="194.0" text="Start" />
+                              <TableColumn prefWidth="194.0" text="End" />
+                              <TableColumn prefWidth="152.0" text="Contact" />
+                           </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
