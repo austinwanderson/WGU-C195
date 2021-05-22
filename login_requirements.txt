@@ -1,0 +1,2 @@
+User ID: 32 | Timestamp: 2021-05-20 17:17:19 | Result: Invalid user ID/password.
+User ID: 2 | Timestamp: 2021-05-20 17:17:25 | Result: Successful Login.

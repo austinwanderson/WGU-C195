@@ -1,21 +1,26 @@
 package c195;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.*;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.Pane;
+
+import java.io.*;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import java.util.Objects;
 
 public class Controller<calendarWidth> {
 
@@ -66,7 +71,7 @@ public class Controller<calendarWidth> {
     @FXML private Button nextMonthBtn;
     @FXML private Button previousMonthBtn;
     @FXML private GridPane calendarGrid;
-    @FXML private Label LoginErrorMessage;
+    @FXML private Label loginErrorMessage;
     @FXML private Label loginMainLabel;
     @FXML private Label loginPasswordLabel;
     @FXML private Label loginUsernameLabel;
@@ -89,7 +94,7 @@ public class Controller<calendarWidth> {
 
     public static Scene main;
 
-    public void handleLoginClicked(ActionEvent actionEvent) throws IOException {
+    public void handleLoginClicked(ActionEvent actionEvent) throws IOException, SQLException {
         boolean loggedin = verifyLogin(loginUsernameField.getText(), loginPasswordField.getText());
         if (loggedin) {
             main = new Scene(Main.main_app);
@@ -101,10 +106,35 @@ public class Controller<calendarWidth> {
         }
     }
 
-    public boolean verifyLogin(String username, String password) {
-        System.out.println(username);
-        System.out.println(password);
-        return true;
+    public boolean verifyLogin(String username, String password) throws SQLException {
+        SqlDriver db = new SqlDriver();
+        ResultSet credentials = db.getUserCredentials(username, password);
+        if (credentials == null) {
+            loginErrorMessage.setText("Unable to connect to database.");
+            loginErrorMessage.setOpacity(1);
+            writeLoginAttemptToFile(username, "Unable to connect to database.");
+            return false;
+        } else if (!credentials.first()) {
+            loginErrorMessage.setText("Invalid user ID/password.");
+            loginErrorMessage.setOpacity(1);
+            writeLoginAttemptToFile(username, "Invalid user ID/password.");
+            return false;
+        } else {
+            writeLoginAttemptToFile(username, "Successful Login.");
+            return true;
+        }
+    }
+
+    public void writeLoginAttemptToFile(String user, String reason) {
+        try {
+            String data = "User ID: " + user + " | " + "Timestamp: " +  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())
+            + " | " + "Result: " + reason + "\n";
+            FileOutputStream file = new FileOutputStream("login_requirements.txt", true);
+            file.write(data.getBytes());
+            file.close();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void initializeUI() {
