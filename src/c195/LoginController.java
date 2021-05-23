@@ -81,6 +81,7 @@ public class LoginController {
             stage = (Stage)loginButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.setTitle("Scheduler");
             stage.show();
         }
     }

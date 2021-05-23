@@ -19,32 +19,10 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Controller {
+public class MainController {
 
     @FXML public AnchorPane ap;
     @FXML public GridPane weekGrid;
-    @FXML public Label apptHeader;
-    @FXML public TextField apptTitleField;
-    @FXML public TextArea apptDescField;
-    @FXML public TextField apptContactField;
-    @FXML public TextField apptLocationField;
-    @FXML public DatePicker apptStartDateField;
-    @FXML public ChoiceBox apptStartTimeSelect;
-    @FXML public DatePicker apptFinishDateField;
-    @FXML public ChoiceBox apptFinishTimeSelect;
-    @FXML public ChoiceBox apptCustomerSelect;
-    @FXML public Button apptOkBtn;
-    @FXML public Button apptCancelBtn;
-    @FXML public Label customerHeader;
-    @FXML public TextField custNameField;
-    @FXML public TextField custPostalCodeField;
-    @FXML public ChoiceBox custCountryField;
-    @FXML public Button custOkBtn;
-    @FXML public Button custCancelBtn;
-    @FXML public TextField custAddressField;
-    @FXML public TextField custCityField;
-    @FXML public ChoiceBox custStateField;
-    @FXML public TextField custPhoneField;
     @FXML public Label weekSundayDayLabel;
     @FXML public Label weekMondayDayLabel;
     @FXML public Label weekTuesdayDayLabel;
@@ -70,7 +48,6 @@ public class Controller {
     @FXML public Button previousMonthBtn;
     @FXML public GridPane calendarGrid;
 
-
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
     public static Node[] weekApptNodes;
@@ -81,6 +58,9 @@ public class Controller {
     public static int currentYear = 0;
     public static LocalDate firstDayOfWeek;
     public static LocalDate lastDayOfWeek;
+
+    Parent root;
+    Stage stage;
 
     @FXML
     public void initialize() throws Exception {
@@ -193,30 +173,49 @@ public class Controller {
     }
 
     public void handleAddNewCustomer(ActionEvent actionEvent) throws IOException {
-        Parent main_parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        /*Parent main_parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
         Scene main = new Scene(main_parent);
         Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
         window.setScene(main);
         window.setTitle("Add Customer");
-        window.show();
+        window.show();*/
+
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        stage = (Stage)ap.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Add Customer");
+        stage.show();
     }
 
-    public void handleUpdateCustomer(ActionEvent actionEvent) {
+    public void handleUpdateCustomer(ActionEvent actionEvent) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        stage = (Stage)ap.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Update Customer");
+        stage.show();
     }
 
     public void handleDeleteCustomer(ActionEvent actionEvent) {
     }
 
     public void handleCreateNewAppt(ActionEvent actionEvent) throws IOException {
-        Parent main_parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("appointment.fxml")));
-        Scene main = new Scene(main_parent);
-        Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        window.setScene(main);
-        window.setTitle("Create Appointment");
-        window.show();
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("appointment.fxml")));
+        stage = (Stage)ap.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Create Appointment");
+        stage.show();
     }
 
-    public void handleUpdateAppt(ActionEvent actionEvent) {
+    public void handleUpdateAppt(ActionEvent actionEvent) throws IOException {
+        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        stage = (Stage)ap.getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Update Appointment");
+        stage.show();
     }
 
     public void handleDeleteAppt(ActionEvent actionEvent) {
@@ -251,17 +250,4 @@ public class Controller {
         LocalDate date = LocalDate.of(currentYear, currentMonth, 1);
         updateCalendarDates(date);
     }
-
-    public void handleApptOk(ActionEvent actionEvent) {
-    }
-
-    public void handleApptCancel(ActionEvent actionEvent) {
-    }
-
-    public void handleCustomerOk(ActionEvent actionEvent) {
-    }
-
-    public void handleCustomerCancel(ActionEvent actionEvent) {
-    }
-
 }
