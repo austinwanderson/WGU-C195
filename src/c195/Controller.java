@@ -7,79 +7,69 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.*;
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Controller<calendarWidth> {
+public class Controller {
 
-    @FXML private GridPane weekGrid;
-    @FXML private Label apptHeader;
-    @FXML private TextField apptTitleField;
-    @FXML private TextArea apptDescField;
-    @FXML private TextField apptContactField;
-    @FXML private TextField apptLocationField;
-    @FXML private DatePicker apptStartDateField;
-    @FXML private ChoiceBox apptStartTimeSelect;
-    @FXML private DatePicker apptFinishDateField;
-    @FXML private ChoiceBox apptFinishTimeSelect;
-    @FXML private ChoiceBox apptCustomerSelect;
-    @FXML private Button apptOkBtn;
-    @FXML private Button apptCancelBtn;
-    @FXML private Label customerHeader;
-    @FXML private TextField custNameField;
-    @FXML private TextField custPostalCodeField;
-    @FXML private ChoiceBox custCountryField;
-    @FXML private Button custOkBtn;
-    @FXML private Button custCancelBtn;
-    @FXML private TextField custAddressField;
-    @FXML private TextField custCityField;
-    @FXML private ChoiceBox custStateField;
-    @FXML private TextField custPhoneField;
-    @FXML private Label weekSundayDayLabel;
-    @FXML private Label weekMondayDayLabel;
-    @FXML private Label weekTuesdayDayLabel;
-    @FXML private Label weekWednesdayDayLabel;
-    @FXML private Label weekThursdayDayLabel;
-    @FXML private Label weekFridayDayLabel;
-    @FXML private Label weekSaturdayDayLabel;
-    @FXML private Accordion weekAccordionApptList;
-    @FXML private Label weekToWeekLabel;
-    @FXML private Button nextWeekBtn;
-    @FXML private Button previousWeekBtn;
-    @FXML private Accordion monthAccordionApptList;
-    @FXML private Button addNewCustomerBtn;
-    @FXML private Button updateCustomerBtn;
-    @FXML private Button deleteCustomerBtn;
-    @FXML private Button createApptBtn;
-    @FXML private Button updateApptBtn;
-    @FXML private Button deleteApptBtn;
-    @FXML private TableView apptTable;
-    @FXML private TableView customerTable;
-    @FXML private Label monthYearLabel;
-    @FXML private Button nextMonthBtn;
-    @FXML private Button previousMonthBtn;
-    @FXML private GridPane calendarGrid;
-    @FXML private Label loginErrorMessage;
-    @FXML private Label loginMainLabel;
-    @FXML private Label loginPasswordLabel;
-    @FXML private Label loginUsernameLabel;
-    @FXML private PasswordField loginPasswordField;
-    @FXML private TextField loginUsernameField;
-    @FXML private Button LoginButton;
-    @FXML private Label loginLanguageLabel;
-    @FXML private ChoiceBox languageChoiceSelect;
+    @FXML public AnchorPane ap;
+    @FXML public GridPane weekGrid;
+    @FXML public Label apptHeader;
+    @FXML public TextField apptTitleField;
+    @FXML public TextArea apptDescField;
+    @FXML public TextField apptContactField;
+    @FXML public TextField apptLocationField;
+    @FXML public DatePicker apptStartDateField;
+    @FXML public ChoiceBox apptStartTimeSelect;
+    @FXML public DatePicker apptFinishDateField;
+    @FXML public ChoiceBox apptFinishTimeSelect;
+    @FXML public ChoiceBox apptCustomerSelect;
+    @FXML public Button apptOkBtn;
+    @FXML public Button apptCancelBtn;
+    @FXML public Label customerHeader;
+    @FXML public TextField custNameField;
+    @FXML public TextField custPostalCodeField;
+    @FXML public ChoiceBox custCountryField;
+    @FXML public Button custOkBtn;
+    @FXML public Button custCancelBtn;
+    @FXML public TextField custAddressField;
+    @FXML public TextField custCityField;
+    @FXML public ChoiceBox custStateField;
+    @FXML public TextField custPhoneField;
+    @FXML public Label weekSundayDayLabel;
+    @FXML public Label weekMondayDayLabel;
+    @FXML public Label weekTuesdayDayLabel;
+    @FXML public Label weekWednesdayDayLabel;
+    @FXML public Label weekThursdayDayLabel;
+    @FXML public Label weekFridayDayLabel;
+    @FXML public Label weekSaturdayDayLabel;
+    @FXML public Accordion weekAccordionApptList;
+    @FXML public Label weekToWeekLabel;
+    @FXML public Button nextWeekBtn;
+    @FXML public Button previousWeekBtn;
+    @FXML public Accordion monthAccordionApptList;
+    @FXML public Button addNewCustomerBtn;
+    @FXML public Button updateCustomerBtn;
+    @FXML public Button deleteCustomerBtn;
+    @FXML public Button createApptBtn;
+    @FXML public Button updateApptBtn;
+    @FXML public Button deleteApptBtn;
+    @FXML public TableView apptTable;
+    @FXML public TableView customerTable;
+    @FXML public Label monthYearLabel;
+    @FXML public Button nextMonthBtn;
+    @FXML public Button previousMonthBtn;
+    @FXML public GridPane calendarGrid;
+
 
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
@@ -92,49 +82,9 @@ public class Controller<calendarWidth> {
     public static LocalDate firstDayOfWeek;
     public static LocalDate lastDayOfWeek;
 
-    public static Scene main;
-
-    public void handleLoginClicked(ActionEvent actionEvent) throws IOException, SQLException {
-        boolean loggedin = verifyLogin(loginUsernameField.getText(), loginPasswordField.getText());
-        if (loggedin) {
-            main = new Scene(Main.main_app);
-            Stage window = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-            window.setScene(main);
-            window.setTitle("Scheduler");
-            window.show();
-            initializeUI();
-        }
-    }
-
-    public boolean verifyLogin(String username, String password) throws SQLException {
-        SqlDriver db = new SqlDriver();
-        ResultSet credentials = db.getUserCredentials(username, password);
-        if (credentials == null) {
-            loginErrorMessage.setText("Unable to connect to database.");
-            loginErrorMessage.setOpacity(1);
-            writeLoginAttemptToFile(username, "Unable to connect to database.");
-            return false;
-        } else if (!credentials.first()) {
-            loginErrorMessage.setText("Invalid user ID/password.");
-            loginErrorMessage.setOpacity(1);
-            writeLoginAttemptToFile(username, "Invalid user ID/password.");
-            return false;
-        } else {
-            writeLoginAttemptToFile(username, "Successful Login.");
-            return true;
-        }
-    }
-
-    public void writeLoginAttemptToFile(String user, String reason) {
-        try {
-            String data = "User ID: " + user + " | " + "Timestamp: " +  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())
-            + " | " + "Result: " + reason + "\n";
-            FileOutputStream file = new FileOutputStream("login_requirements.txt", true);
-            file.write(data.getBytes());
-            file.close();
-        } catch(IOException e){
-            e.printStackTrace();
-        }
+    @FXML
+    public void initialize() throws Exception {
+        initializeUI();
     }
 
     public void initializeUI() {
@@ -151,9 +101,8 @@ public class Controller<calendarWidth> {
     }
 
     private void buildCalendar() {
-        GridPane calendar = (GridPane) main.lookup("#calendarGrid");
         calendarNodes = new Node[calendarWidth][calendarHeight];
-        for (Node child : calendar.getChildren()) {
+        for (Node child : calendarGrid.getChildren()) {
             Integer column = GridPane.getColumnIndex(child);
             Integer row = GridPane.getRowIndex(child);
             if (column == null) { column = 0; }
@@ -163,10 +112,9 @@ public class Controller<calendarWidth> {
     }
 
     private void buildWeek() {
-        GridPane weekCalendar = (GridPane) main.lookup("#weekGrid");
         weekDayNodes = new Node[calendarWidth];
         weekApptNodes = new Node[calendarWidth];
-        for (Node child : weekCalendar.getChildren()) {
+        for (Node child : weekGrid.getChildren()) {
             Integer column = GridPane.getColumnIndex(child);
             Integer row = GridPane.getRowIndex(child);
             if (column == null) { column = 0; }
@@ -177,7 +125,6 @@ public class Controller<calendarWidth> {
     }
 
     private void updateWeekDates(LocalDate day) {
-        System.out.println(day.toString());
         int dayOfWeek = day.getDayOfWeek().getValue();
         LocalDate monday = day.minusDays(dayOfWeek-1);
         int i = 1;
@@ -203,7 +150,7 @@ public class Controller<calendarWidth> {
                 firstDayOfWeek.getMonthValue() + "/" + firstDayOfWeek.getDayOfMonth() + "/" + firstDayOfWeek.getYear() + " - " +
                 lastDayOfWeek.getMonthValue() + "/" + lastDayOfWeek.getDayOfMonth() + "/" + lastDayOfWeek.getYear();
         if (weekToWeekLabel == null) {
-            weekToWeekLabel = (Label) main.lookup("#weekToWeekLabel");
+            weekToWeekLabel = (Label) Main.main_scene.lookup("#weekToWeekLabel");
         }
         weekToWeekLabel.setText(weekLabel);
     }
@@ -240,7 +187,7 @@ public class Controller<calendarWidth> {
 
         String monthName = firstOfMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.US);
         if (monthYearLabel == null) {
-            monthYearLabel = (Label) main.lookup("#monthYearLabel");
+            monthYearLabel = (Label) Main.main_scene.lookup("#monthYearLabel");
         }
         monthYearLabel.setText(monthName + " " + currentYear);
     }

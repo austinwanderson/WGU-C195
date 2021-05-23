@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<GridPane hgap="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="272.0" prefWidth="443.0" vgap="4.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.Controller">
+<GridPane hgap="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="272.0" prefWidth="443.0" vgap="4.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.LoginController" fx:id="ap">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="194.0" minWidth="10.0" prefWidth="77.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="384.0" minWidth="10.0" prefWidth="383.0" />
@@ -36,10 +36,10 @@
          <children>
             <TextField fx:id="loginUsernameField" GridPane.columnIndex="1" />
             <PasswordField fx:id="loginPasswordField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label fx:id="loginUsernameLabel" prefHeight="17.0" prefWidth="67.0" text="User ID:" />
-            <Label fx:id="loginPasswordLabel" prefHeight="17.0" prefWidth="68.0" text="Password:" GridPane.rowIndex="1" />
-            <Label fx:id="loginLanguageLabel" layoutX="10.0" layoutY="22.0" prefHeight="17.0" prefWidth="67.0" text="Language:" GridPane.rowIndex="2" />
-            <ChoiceBox fx:id="languageChoiceSelect" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label fx:id="loginUsernameLabel" prefHeight="17.0" prefWidth="117.0" text="User ID:" />
+            <Label fx:id="loginPasswordLabel" prefHeight="17.0" prefWidth="117.0" text="Password:" GridPane.rowIndex="1" />
+            <Label fx:id="loginLanguageLabel" layoutX="10.0" layoutY="22.0" prefHeight="17.0" prefWidth="117.0" text="Language:" GridPane.rowIndex="2" />
+            <ChoiceBox fx:id="languageChoiceSelect" onAction="#handleLanguageSelect" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">
@@ -50,15 +50,17 @@
         <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button fx:id="LoginButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLoginClicked" prefHeight="26.0" prefWidth="94.0" text="Login" textAlignment="CENTER" GridPane.columnIndex="1" />
+            <Button fx:id="loginButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleLoginClicked" prefHeight="26.0" prefWidth="94.0" text="Login" textAlignment="CENTER" GridPane.columnIndex="1" />
             <Label fx:id="loginErrorMessage" opacity="0.0" text="Incorrect Password error message." textFill="#e60202" />
+            <Label fx:id="loginZoneLabel" prefHeight="17.0" prefWidth="256.0" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
          <children>
-            <Label fx:id="loginMainLabel" contentDisplay="CENTER" prefHeight="18.0" prefWidth="134.0" text="C195 WGU Scheduler">
+            <Label fx:id="loginMainLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="269.0" text="C195 WGU Scheduler">
                <font>
                   <Font size="14.0" />
                </font>
