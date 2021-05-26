@@ -47,6 +47,8 @@ public class MainController {
     @FXML public Button nextMonthBtn;
     @FXML public Button previousMonthBtn;
     @FXML public GridPane calendarGrid;
+    @FXML public Label hiddenMainApptLabel;
+    @FXML public Label hiddenMainCustomerLabel;
 
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
@@ -173,13 +175,6 @@ public class MainController {
     }
 
     public void handleAddNewCustomer(ActionEvent actionEvent) throws IOException {
-        /*Parent main_parent = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
-        Scene main = new Scene(main_parent);
-        Stage window = (Stage)((Node)actionEvent.getSource()).getScene().getWindow();
-        window.setScene(main);
-        window.setTitle("Add Customer");
-        window.show();*/
-
         root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
@@ -201,7 +196,9 @@ public class MainController {
     }
 
     public void handleCreateNewAppt(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("appointment.fxml")));
+        FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
+        root = loader.load();
+        AppointmentController apptCtrl = loader.getController();
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -210,7 +207,12 @@ public class MainController {
     }
 
     public void handleUpdateAppt(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        //String str = estdate.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST (" + localdate.format(DateTimeFormatter.ofPattern("hh:mm a z")) + ")";
+        FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
+        root = loader.load();
+        AppointmentController apptCtrl = loader.getController();
+        apptCtrl.setHeader("Update Appointment");
+        apptCtrl.setTitle("This is a test.");
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

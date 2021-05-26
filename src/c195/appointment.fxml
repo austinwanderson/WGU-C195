@@ -9,20 +9,22 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="416.0" prefWidth="461.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.AppointmentController">
+<AnchorPane fx:id="ap" prefHeight="416.0" prefWidth="461.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.AppointmentController">
    <children>
+      <Label fx:id="hiddenApptLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="apptHeader" alignment="CENTER" layoutX="156.0" layoutY="14.0" prefHeight="17.0" prefWidth="149.0" text="Create Appointment" textAlignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
       <TextField fx:id="apptTitleField" layoutX="91.0" layoutY="44.0" prefHeight="26.0" prefWidth="347.0" />
-      <TextArea fx:id="apptDescField" layoutX="91.0" layoutY="78.0" prefHeight="108.0" prefWidth="347.0" />
+      <TextArea fx:id="apptDescField" layoutX="91.0" layoutY="78.0" prefHeight="74.0" prefWidth="347.0" />
+      <TextField fx:id="apptTypeField" layoutX="91.0" layoutY="160.0" prefHeight="26.0" prefWidth="347.0" />
       <TextField fx:id="apptContactField" layoutX="91.0" layoutY="194.0" prefHeight="26.0" prefWidth="347.0" />
       <TextField fx:id="apptLocationField" layoutX="91.0" layoutY="228.0" prefHeight="26.0" prefWidth="347.0" />
-      <DatePicker fx:id="apptStartDateField" layoutX="91.0" layoutY="262.0" />
+      <DatePicker fx:id="apptDateField" layoutX="91.0" layoutY="262.0" />
       <ChoiceBox fx:id="apptStartTimeSelect" layoutX="288.0" layoutY="262.0" prefWidth="150.0" />
-      <DatePicker fx:id="apptFinishDateField" layoutX="91.0" layoutY="296.0" />
+      <DatePicker fx:id="apptFinishDateField" layoutX="91.0" layoutY="296.0" opacity="0" />
       <ChoiceBox fx:id="apptFinishTimeSelect" layoutX="288.0" layoutY="296.0" prefWidth="150.0" />
       <ChoiceBox fx:id="apptCustomerSelect" layoutX="91.0" layoutY="330.0" prefHeight="26.0" prefWidth="347.0" />
       <Button fx:id="apptOkBtn" layoutX="344.0" layoutY="370.0" mnemonicParsing="false" onAction="#handleApptOk" prefHeight="26.0" prefWidth="93.0" text="OK" />
@@ -34,5 +36,8 @@
       <Label layoutX="16.0" layoutY="301.0" prefHeight="17.0" prefWidth="77.0" text="Finish:" />
       <Label layoutX="16.0" layoutY="335.0" prefHeight="17.0" prefWidth="77.0" text="Customer:" />
       <Label layoutX="16.0" layoutY="84.0" prefHeight="17.0" prefWidth="77.0" text="Description:" />
+      <Label fx:id="userIdLabel" layoutX="16.0" layoutY="15.0" opacity="0.0" text="userid" />
+      <Label layoutX="14.0" layoutY="165.0" prefHeight="17.0" prefWidth="77.0" text="Type:" />
+      <Label fx:id="apptErrorMessage" layoutX="18.0" layoutY="375.0" opacity="0.0" prefHeight="17.0" prefWidth="226.0" textFill="RED" />
    </children>
 </AnchorPane>

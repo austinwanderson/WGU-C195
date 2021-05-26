@@ -36,19 +36,15 @@ public class LoginController {
     @FXML private Label loginZoneLabel;
 
     public static String currentLanguage;
-    public static Boolean login_initialized = false;
 
     Parent root;
     Stage stage;
 
     @FXML
     public void initialize() {
-        if (!login_initialized) {
-            login_initialized = true;
-            loginZoneLabel.setText(java.time.ZoneId.systemDefault().toString());
-            languageChoiceSelect.setItems(FXCollections.observableArrayList("English", "French"));
-            setLoginLanguage("");
-        }
+        loginZoneLabel.setText(java.time.ZoneId.systemDefault().toString());
+        languageChoiceSelect.setItems(FXCollections.observableArrayList("English", "French"));
+        setLoginLanguage("");
     }
 
     public void setLoginLanguage(String language) {
@@ -68,7 +64,6 @@ public class LoginController {
             loginLanguageLabel.setText(rb.getString("language"));
             loginButton.setText(rb.getString("button"));
             loginMainLabel.setText(rb.getString("header"));
-            //Main.main_stage.setTitle(rb.getString("title"));
         } catch (MissingResourceException e) {
             e.printStackTrace();
         }

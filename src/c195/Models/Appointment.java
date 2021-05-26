@@ -1,26 +1,37 @@
 package c195.Models;
 
+import c195.SqlDriver;
+
 import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class Appointment {
 
     private int appointmentId;
-    private int customerId;
-    private int consultantId;
+    private String customerId;
+    private String consultantId;
     private Customer customer;
     private String title;
     private String description;
     private String location;
     private String contact;
     private String type;
-    private Date appointmentStart;
-    private Date appointmentEnd;
-    private Date createDate;
+    private String startDate;
+    private String startTime;
+    private String finishDate;
+    private String finishTime;
+    private ZonedDateTime startUTC;
+    private ZonedDateTime finishUTC;
 
+    //Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType apptContact, apptLocation, apptStartDate, apptStartTime,
+    //                apptFinishDate, apptFinishTime, apptCustomer, userId);
 
-    public Appointment(int appointmentId, int customerId, int consultantId, String title, String description, String location,
-                       String contact, String type, Date appointmentStart, Date appointmentEnd, Date createDate){
-        setAppointmentId(appointmentId);
+    public Appointment(String title, String description, String type, String contact, String location, String startDate, String startTime,
+                       String finishDate, String finishTime, String customerId, String consultantId){
         setCustomerId(customerId);
         setConsultantId(consultantId);
         setTitle(title);
@@ -28,16 +39,8 @@ public class Appointment {
         setLocation(location);
         setContact(contact);
         setType(type);
-        setAppointmentStart(appointmentStart);
-        setAppointmentEnd(appointmentEnd);
-        setCreateDate(createDate);
-    }
-
-    public Appointment(Date appointmentStart, Date appointmentEnd, String title, String type) {
-        setAppointmentStart(appointmentStart);
-        setAppointmentEnd(appointmentEnd);
-        setTitle(title);
-        setType(type);
+        setAppointmentStart(startDate, startTime);
+        setAppointmentEnd(finishDate, finishTime);
     }
 
     public Appointment(){
@@ -45,14 +48,6 @@ public class Appointment {
 
     public int getAppointmentId(){
         return this.appointmentId;
-    }
-
-    public int getCustomerId(){
-        return this.customerId;
-    }
-
-    public int getConsultantId(){
-        return this.consultantId;
     }
 
     public String getTitle(){
@@ -75,20 +70,24 @@ public class Appointment {
         return this.type;
     }
 
-    public Date getStart(){
-        return this.appointmentStart;
-    }
-
-    public Date getEnd(){
-        return this.appointmentEnd;
-    }
-
-    public Date getCreateDate(){
-        return this.createDate;
-    }
-
     public Customer getCustomer() {
         return customer;
+    }
+
+    public String getStartDateTime() {
+        return this.startUTC.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public String getEndDateTime() {
+        return this.finishUTC.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public ZonedDateTime getUTCStartDate() {
+        return this.startUTC;
+    }
+
+    public ZonedDateTime getUTCFinishDate() {
+        return this.finishUTC;
     }
 
     private void setCustomer(Customer customer){
@@ -98,11 +97,11 @@ public class Appointment {
         this.appointmentId = appointmentId;
     }
 
-    private void setCustomerId(int customerId){
+    private void setCustomerId(String customerId){
         this.customerId = customerId;
     }
 
-    private void setConsultantId(int consultantId){
+    private void setConsultantId(String consultantId){
         this.consultantId = consultantId;
     }
 
@@ -126,15 +125,36 @@ public class Appointment {
         this.type = type;
     }
 
-    private void setAppointmentStart(Date startTime){
-        this.appointmentStart = startTime;
+    private void setAppointmentStart(String startDate, String startTime){
+        this.startTime = startTime;
+        this.startDate = startDate;
+        String dt = (startDate + " " + startTime.substring(0,12));
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a z");
+        ZonedDateTime estdate = ZonedDateTime.parse(dt, f);
+        this.startUTC = estdate.withZoneSameInstant(ZoneId.of("+0"));
     }
 
-    private void setAppointmentEnd(Date endTime){
-        this.appointmentEnd = endTime;
+    private void setAppointmentEnd(String finishDate, String finishTime){
+        this.finishDate = finishDate;
+        this.finishTime = finishTime;
+        String dt = (finishDate + " " + finishTime.substring(0,12));
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a z");
+        ZonedDateTime estdate = ZonedDateTime.parse(dt, f);
+        this.finishUTC = estdate.withZoneSameInstant(ZoneId.of("+0"));
     }
 
-    private void setCreateDate(Date createDate){
-        this.createDate = createDate;
+    public boolean pushToDatabase() {
+        SqlDriver db = new SqlDriver();
+        int appointmentId = db.createAppointment(this);
+        if (appointmentId > 0) {
+            return true;
+        }
+        return false;
     }
 }
+
+
+
+
+
+
