@@ -1,5 +1,6 @@
 package c195;
 
+import c195.Models.User;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,7 +73,12 @@ public class LoginController {
     public void handleLoginClicked(ActionEvent actionEvent) throws IOException, SQLException {
         boolean loggedin = verifyLogin(loginUsernameField.getText(), loginPasswordField.getText());
         if (loggedin) {
-            root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("main.fxml")));
+            User user = new User(loginUsernameField.getText());
+            FXMLLoader loader = new FXMLLoader((getClass().getResource("main.fxml")));
+            root = loader.load();
+            MainController mainCtrl = loader.getController();
+            mainCtrl.hiddenUserIdLabel.setText(user.getUserId());
+            mainCtrl.hiddenUsernameLabel.setText(user.getUsername());
             stage = (Stage)loginButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

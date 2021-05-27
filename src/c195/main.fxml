@@ -19,6 +19,8 @@
 <AnchorPane prefHeight="620.0" prefWidth="953.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="c195.MainController" fx:id="ap">
    <Label fx:id="hiddenMainApptLabel" text="" opacity="0" layoutX="0.0" layoutY="0.0" />
    <Label fx:id="hiddenMainCustomerLabel" text="" opacity="0" layoutX="0.0" layoutY="0.0" />
+   <Label fx:id="hiddenUserIdLabel" text="" opacity="0" layoutX="0.0" layoutY="0.0" />
+   <Label fx:id="hiddenUsernameLabel" text="" opacity="0" layoutX="0.0" layoutY="0.0" />
    <children>
       <TabPane prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>

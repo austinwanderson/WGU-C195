@@ -22,11 +22,12 @@ public class AppointmentController {
 
     @FXML public AnchorPane ap;
     @FXML public Label apptHeader;
-    @FXML public Label userIdLabel;
+    @FXML public Label hiddenUserIdLabel;
+    @FXML public Label hiddenUsernameLabel;
     @FXML public Label apptErrorMessage;
     @FXML public TextField apptTitleField;
     @FXML public TextArea apptDescField;
-    @FXML public TextField apptContactField;
+    @FXML public ChoiceBox apptContactSelect;
     @FXML public TextField apptLocationField;
     @FXML public TextField apptTypeField;
     @FXML public DatePicker apptDateField;
@@ -49,7 +50,18 @@ public class AppointmentController {
 
         populateDateTimeFields();
         populateCustomerSelect();
+        populateContactSelect();
 
+    }
+
+    private void populateContactSelect() throws SQLException {
+        SqlDriver db = new SqlDriver();
+        ObservableList<String[]> n = db.getContacts();
+        ObservableList<Object> l = FXCollections.observableArrayList();
+        n.forEach((name) -> {
+            l.add(name[0] + ": " + name[1] + " (" + name[2] + ")");
+        });
+        apptContactSelect.setItems(l);
     }
 
     private void populateCustomerSelect() throws SQLException {
@@ -104,14 +116,14 @@ public class AppointmentController {
     public void handleApptOk(ActionEvent actionEvent) throws IOException {
         String apptTitle = apptTitleField.getText();
         String apptDesc = apptDescField.getText();
-        String apptContact = apptContactField.getText();
+        String apptContact = (apptContactSelect.getValue() != null) ? apptContactSelect.getValue().toString().split(":")[0] : "";
         String apptLocation = apptLocationField.getText();
         String apptType = apptTypeField.getText();
         String apptDate = (apptDateField.getValue() != null) ? apptDateField.getValue().toString() : "";
         String apptStartTime = (apptStartTimeSelect.getValue() != null) ? apptStartTimeSelect.getValue().toString() : "";
         String apptFinishTime = (apptFinishTimeSelect.getValue() != null) ? apptFinishTimeSelect.getValue().toString() : "";
         String apptCustomer = (apptCustomerSelect.getValue() != null) ? apptCustomerSelect.getValue().toString() : "";
-        String userId = userIdLabel.getText();
+        String userId = hiddenUserIdLabel.getText();
 
         final String[] customerId = new String[1];
         getNames().forEach((name) -> {
@@ -200,7 +212,7 @@ public class AppointmentController {
     }
 
     public void setContact(String c) {
-        apptContactField.setText(c);
+        apptContactSelect.setValue(c);
     }
 
     public void setLocation(String l) {

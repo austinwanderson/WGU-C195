@@ -32,8 +32,6 @@ public class Main extends Application {
             primaryStage.setTitle("Login");
         }
         login_scene = new Scene(login, 443, 272);
-        //main_scene = new Scene(main_app, 953, 620);
-        //System.out.println(main_scene);
         primaryStage.setScene(login_scene);
         main_stage = primaryStage;
         main_stage.show();

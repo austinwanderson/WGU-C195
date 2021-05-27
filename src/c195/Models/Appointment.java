@@ -13,7 +13,9 @@ public class Appointment {
 
     private int appointmentId;
     private String customerId;
-    private String consultantId;
+    private String contactId;
+    private String createdById;
+    private String updatedById;
     private Customer customer;
     private String title;
     private String description;
@@ -30,14 +32,15 @@ public class Appointment {
     //Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType apptContact, apptLocation, apptStartDate, apptStartTime,
     //                apptFinishDate, apptFinishTime, apptCustomer, userId);
 
-    public Appointment(String title, String description, String type, String contact, String location, String startDate, String startTime,
-                       String finishDate, String finishTime, String customerId, String consultantId){
+    public Appointment(String title, String description, String type, String contactId, String location, String startDate, String startTime,
+                       String finishDate, String finishTime, String customerId, String userId){
         setCustomerId(customerId);
-        setConsultantId(consultantId);
+        setContactId(contactId);
+        setCreatedById(userId);
+        setUpdatedById(userId);
         setTitle(title);
         setDescription(description);
         setLocation(location);
-        setContact(contact);
         setType(type);
         setAppointmentStart(startDate, startTime);
         setAppointmentEnd(finishDate, finishTime);
@@ -49,27 +52,24 @@ public class Appointment {
     public int getAppointmentId(){
         return this.appointmentId;
     }
-
     public String getTitle(){
         return this.title;
     }
-
     public String getDescription(){
         return this.description;
     }
-
     public String getLocation(){
         return this.location;
     }
-
-    public String getContact(){
-        return this.contact;
+    public String getContactId(){
+        return this.contactId;
     }
-
+    public String getCreatedById(){ return this.createdById; }
+    public String getUpdatedById(){ return this.updatedById; }
+    public String getCustomerId(){ return this.customerId; }
     public String getType(){
         return this.type;
     }
-
     public Customer getCustomer() {
         return customer;
     }
@@ -96,31 +96,27 @@ public class Appointment {
     private void setAppointmentId(int appointmentId){
         this.appointmentId = appointmentId;
     }
-
     private void setCustomerId(String customerId){
         this.customerId = customerId;
     }
-
-    private void setConsultantId(String consultantId){
-        this.consultantId = consultantId;
+    private void setCreatedById(String userId){
+        this.createdById = userId;
     }
-
+    private void setUpdatedById(String userId){
+        this.updatedById = userId;
+    }
+    private void setContactId(String contactId){
+        this.contactId = contactId;
+    }
     private void setTitle(String title){
         this.title = title;
     }
-
     private void setDescription(String description){
         this.description = description;
     }
-
     private void setLocation(String location){
         this.location = location;
     }
-
-    private void setContact(String contact){
-        this.contact = contact;
-    }
-
     private void setType(String type){
         this.type = type;
     }

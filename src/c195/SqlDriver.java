@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class SqlDriver {
 
@@ -43,7 +44,10 @@ public class SqlDriver {
             String query = "insert into appointments (title, description, location, type, start, end, " +
                     "create_date, created_by, last_update, last_updated_by, customer_id, user_id, contact_id) values ('" + appointment.getTitle() +
                     "','" + appointment.getDescription() + "','" + appointment.getLocation() + "','" + appointment.getType() + "','" +
-                    appointment.getStartDateTime() + "','" + appointment.getEndDateTime() + "','" + now + "','1','" + now + "','1','2','3','4');";
+                    appointment.getStartDateTime() + "','" + appointment.getEndDateTime() + "','" + now + "','" + appointment.getCreatedById() +
+                    "','" + now + "','" + appointment.getUpdatedById() + "','" + appointment.getCustomerId() + "','" + appointment.getCreatedById() +
+                    "','" + appointment.getContactId() + "');";
+            System.out.println(query);
             createApptStatement = this.db.createStatement();
             newAppt = createApptStatement.executeUpdate(query);
             return newAppt;
@@ -79,6 +83,39 @@ public class SqlDriver {
             return false;
         }
         return true;
+    }
+
+    public ObservableList<String[]> getContacts() throws SQLException {
+        Statement contactQuery = null;
+        ResultSet results = null;
+        ObservableList<String[]> contacts = FXCollections.observableArrayList();
+        contactQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = contactQuery.executeQuery("select * from contacts;");
+        while (results.next()) {
+            String[] n = {results.getString("contact_id"), results.getString("contact_name"), results.getString("email")};
+            contacts.add(n);
+        }
+        return contacts;
+    }
+
+    public String[] getUser(String userId) throws SQLException {
+        Statement userQuery = null;
+        ResultSet results = null;
+        userQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = userQuery.executeQuery("select * from users where user_id = '" + userId + "' or user_name = '" + userId + "';");
+        while (results.next()) {
+            String[] n = {results.getString("user_id"), results.getString("user_name"), results.getString("password")};
+            return n;
+        }
+        return new String[] {"","",""};
+    }
+
+    public List<String> getApptsForTable() throws SQLException {
+        List<String> appts;
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = apptsQuery.executeQuery("select * from appointments;");
     }
 }
 

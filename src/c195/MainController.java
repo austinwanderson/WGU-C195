@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -49,6 +50,8 @@ public class MainController {
     @FXML public GridPane calendarGrid;
     @FXML public Label hiddenMainApptLabel;
     @FXML public Label hiddenMainCustomerLabel;
+    @FXML public Label hiddenUsernameLabel;
+    @FXML public Label hiddenUserIdLabel;
 
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
@@ -80,6 +83,14 @@ public class MainController {
         updateCalendarDates(firstOfMonth);
         buildWeek();
         updateWeekDates(today);
+        updateApptsTable();
+    }
+
+    private void updateApptsTable() {
+        //tableView.getItems().setAll(parseUserList());
+        //private List<User> parseUserList(){
+        SqlDriver db = new SqlDriver();
+        List<String> appts = db.getApptsForTable();
     }
 
     private void buildCalendar() {
@@ -199,6 +210,8 @@ public class MainController {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
         AppointmentController apptCtrl = loader.getController();
+        apptCtrl.hiddenUserIdLabel.setText(hiddenUserIdLabel.getText());
+        apptCtrl.hiddenUsernameLabel.setText(hiddenUsernameLabel.getText());
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -207,12 +220,12 @@ public class MainController {
     }
 
     public void handleUpdateAppt(ActionEvent actionEvent) throws IOException {
-        //String str = estdate.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST (" + localdate.format(DateTimeFormatter.ofPattern("hh:mm a z")) + ")";
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
         AppointmentController apptCtrl = loader.getController();
+        apptCtrl.hiddenUserIdLabel.setText(hiddenUserIdLabel.getText());
+        apptCtrl.hiddenUsernameLabel.setText(hiddenUsernameLabel.getText());
         apptCtrl.setHeader("Update Appointment");
-        apptCtrl.setTitle("This is a test.");
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -253,3 +266,9 @@ public class MainController {
         updateCalendarDates(date);
     }
 }
+
+
+
+
+
+
