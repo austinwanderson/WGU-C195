@@ -1,5 +1,7 @@
 package c195;
 
+import c195.Models.Appointment;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,13 +9,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -66,13 +72,14 @@ public class MainController {
 
     Parent root;
     Stage stage;
+    Appointment selectedAppt;
 
     @FXML
     public void initialize() throws Exception {
         initializeUI();
     }
 
-    public void initializeUI() {
+    public void initializeUI() throws SQLException {
         LocalDate today = LocalDate.now();
         currentMonth = today.getMonthValue();
         currentDay = today.getDayOfMonth();
@@ -86,11 +93,50 @@ public class MainController {
         updateApptsTable();
     }
 
-    private void updateApptsTable() {
+    private void updateApptsTable() throws SQLException {
         //tableView.getItems().setAll(parseUserList());
         //private List<User> parseUserList(){
         SqlDriver db = new SqlDriver();
-        List<String> appts = db.getApptsForTable();
+        List<String[]> appts = db.getApptsForTable();
+
+        TableColumn apptIdColumn = new TableColumn("Id");
+        apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
+        TableColumn apptTitleColumn = new TableColumn("Title");
+        apptTitleColumn.setCellValueFactory(new PropertyValueFactory<>("Title"));
+        TableColumn apptStartColumn = new TableColumn("Start");
+        apptStartColumn.setCellValueFactory(new PropertyValueFactory<>("Start"));
+        TableColumn apptEndColumn = new TableColumn("End");
+        apptEndColumn.setCellValueFactory(new PropertyValueFactory<>("End"));
+        TableColumn apptContactColumn = new TableColumn("Contact");
+        apptContactColumn.setCellValueFactory(new PropertyValueFactory<>("Contact"));
+
+        apptTable.getColumns().addAll(apptIdColumn, apptTitleColumn, apptStartColumn, apptEndColumn, apptContactColumn);
+        appts.forEach((appt) -> {
+            try {
+                Appointment ap = new Appointment(appt[0], appt[1], appt[2], appt[3], db.getContactNameById(appt[4]));
+                apptTable.getItems().add(ap);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                Appointment ap = new Appointment(appt[0], appt[1], appt[2], appt[3], appt[4]);
+                apptTable.getItems().add(ap);
+            }
+        });
+
+        apptTable.setOnMouseClicked((event) -> {
+            if (event.getClickCount() == 1) {
+                apptSelect();
+            }
+        });
+    }
+
+    public void apptSelect() {
+        if (apptTable.getSelectionModel().getSelectedItem() != null) {
+            selectedAppt = (Appointment) apptTable.getSelectionModel().getSelectedItem();
+            updateApptBtn.setDisable(false);
+            deleteApptBtn.setDisable(false);
+            //nameTextField.setText(selectedPerson.getName());
+            //addressTextField.setText(selectedPerson.getAddress());
+        }
     }
 
     private void buildCalendar() {
@@ -219,12 +265,18 @@ public class MainController {
         stage.show();
     }
 
-    public void handleUpdateAppt(ActionEvent actionEvent) throws IOException {
+    public void handleUpdateAppt(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
+        SqlDriver db = new SqlDriver();
         AppointmentController apptCtrl = loader.getController();
         apptCtrl.hiddenUserIdLabel.setText(hiddenUserIdLabel.getText());
         apptCtrl.hiddenUsernameLabel.setText(hiddenUsernameLabel.getText());
+        Appointment editingAppt = db.getApptById(selectedAppt.getId());
+        System.out.println(editingAppt.getStart());
+        System.out.println(editingAppt.getEnd());
+        //Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType, apptContact, apptLocation, apptDate, apptStartTime,
+        //                    apptDate, apptFinishTime, customerId[0], userId);
         apptCtrl.setHeader("Update Appointment");
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);

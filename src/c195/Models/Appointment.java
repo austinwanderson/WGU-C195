@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class Appointment {
 
-    private int appointmentId;
+    private String appointmentId;
     private String customerId;
     private String contactId;
     private String createdById;
@@ -26,11 +26,10 @@ public class Appointment {
     private String startTime;
     private String finishDate;
     private String finishTime;
+    private String start;
+    private String end;
     private ZonedDateTime startUTC;
     private ZonedDateTime finishUTC;
-
-    //Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType apptContact, apptLocation, apptStartDate, apptStartTime,
-    //                apptFinishDate, apptFinishTime, apptCustomer, userId);
 
     public Appointment(String title, String description, String type, String contactId, String location, String startDate, String startTime,
                        String finishDate, String finishTime, String customerId, String userId){
@@ -46,10 +45,15 @@ public class Appointment {
         setAppointmentEnd(finishDate, finishTime);
     }
 
-    public Appointment(){
+    public Appointment(String id, String title, String start, String end, String contact) {
+        setAppointmentId(id);
+        setTitle(title);
+        setStart(start);
+        setEnd(end);
+        setContact(contact);
     }
 
-    public int getAppointmentId(){
+    public String getId(){
         return this.appointmentId;
     }
     public String getTitle(){
@@ -70,6 +74,21 @@ public class Appointment {
     public String getType(){
         return this.type;
     }
+    public String getStart() {
+        String d = this.start + " UTC" ;
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+        ZonedDateTime e = ZonedDateTime.parse(d,f);
+        ZonedDateTime g = e.withZoneSameInstant(ZoneId.systemDefault());
+        return g.format(f);
+    }
+    public String getEnd() {
+        String d = this.end + " UTC";
+        DateTimeFormatter f = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+        ZonedDateTime e = ZonedDateTime.parse(d,f);
+        ZonedDateTime g = e.withZoneSameInstant(ZoneId.systemDefault());
+        return g.format(f);
+    }
+    public String getContact() { return this.contact; }
     public Customer getCustomer() {
         return customer;
     }
@@ -93,7 +112,7 @@ public class Appointment {
     private void setCustomer(Customer customer){
         this.customer = customer;
     }
-    private void setAppointmentId(int appointmentId){
+    private void setAppointmentId(String appointmentId){
         this.appointmentId = appointmentId;
     }
     private void setCustomerId(String customerId){
@@ -117,9 +136,14 @@ public class Appointment {
     private void setLocation(String location){
         this.location = location;
     }
-    private void setType(String type){
-        this.type = type;
+    private void setStart(String start){
+        this.start = start;
     }
+    private void setEnd(String end){
+        this.end = end;
+    }
+    private void setContact(String contact){ this.contact = contact; }
+    private void setType(String type){ this.type = type; }
 
     private void setAppointmentStart(String startDate, String startTime){
         this.startTime = startTime;

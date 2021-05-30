@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SqlDriver {
@@ -28,7 +29,7 @@ public class SqlDriver {
         ResultSet credentials = null;
         try {
             loginStatement = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            credentials = loginStatement.executeQuery("select * from users where User_ID = '" + username + "' and Password = '" + password + "';");
+            credentials = loginStatement.executeQuery("select * from users where User_Name = '" + username + "' and Password = '" + password + "';");
             return credentials;
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -47,7 +48,6 @@ public class SqlDriver {
                     appointment.getStartDateTime() + "','" + appointment.getEndDateTime() + "','" + now + "','" + appointment.getCreatedById() +
                     "','" + now + "','" + appointment.getUpdatedById() + "','" + appointment.getCustomerId() + "','" + appointment.getCreatedById() +
                     "','" + appointment.getContactId() + "');";
-            System.out.println(query);
             createApptStatement = this.db.createStatement();
             newAppt = createApptStatement.executeUpdate(query);
             return newAppt;
@@ -110,12 +110,46 @@ public class SqlDriver {
         return new String[] {"","",""};
     }
 
-    public List<String> getApptsForTable() throws SQLException {
-        List<String> appts;
+    public List<String[]> getApptsForTable() throws SQLException {
+        List<String[]> appts = new ArrayList<String[]>();
         Statement apptsQuery = null;
         ResultSet results = null;
         apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        results = apptsQuery.executeQuery("select * from appointments;");
+        results = apptsQuery.executeQuery("select appointment_id, title, start, end, contact_id from appointments;");
+        int i = 0;
+        while (results.next()) {
+            appts.add(i, new String[]{results.getString("appointment_id"), results.getString("title"), results.getString("start"),
+                    results.getString("end"), results.getString("contact_id")});
+            i += 1;
+        }
+        return appts;
+    }
+
+    public String getContactNameById(String id) throws SQLException {
+        Statement nameQuery = null;
+        ResultSet results = null;
+        nameQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = nameQuery.executeQuery("select contact_name from contacts where contact_id = '" + id + "';");
+        while (results.next()) {
+            return results.getString("contact_name");
+        }
+        return "";
+    }
+
+    public Appointment getApptById(String id) throws SQLException {
+        Statement apptQuery = null;
+        ResultSet results = null;
+        apptQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = apptQuery.executeQuery("select contact_name from contacts where contact_id = '" + id + "';");
+        while (results.next()) {
+            //new Appointment(apptTitle, apptDesc, apptType, apptContact, apptLocation, apptDate, apptStartTime,
+            //        //                    apptDate, apptFinishTime, customerId[0], userId);
+            return new Appointment(results.getString("title"),results.getString("description"),results.getString("contact_id"),
+                    results.getString("location"),results.getString("description"),results.getString("start").substring(0,11),
+                    results.getString("start").substring(12),results.getString("finish").substring(0,11),results.getString("finish").substring(12),
+                    results.getString("customer_id"),results.getString("user_id"));
+        }
+        return null;
     }
 }
 
