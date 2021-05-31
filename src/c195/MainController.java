@@ -2,6 +2,7 @@ package c195;
 
 import c195.Models.Appointment;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,12 +25,14 @@ import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainController {
 
     @FXML public AnchorPane ap;
     @FXML public GridPane weekGrid;
+    @FXML public TabPane mainTabs;
     @FXML public Label weekSundayDayLabel;
     @FXML public Label weekMondayDayLabel;
     @FXML public Label weekTuesdayDayLabel;
@@ -69,6 +72,12 @@ public class MainController {
     public static int currentYear = 0;
     public static LocalDate firstDayOfWeek;
     public static LocalDate lastDayOfWeek;
+    public static LocalDate today;
+    public static LocalDate firstOfMonth;
+    public static Boolean weekInitialized = false;
+    public static Boolean monthInitialized = false;
+    public static Boolean customersInitialized = false;
+    public static Boolean appointmentsInitialized = false;
 
     Parent root;
     Stage stage;
@@ -80,24 +89,60 @@ public class MainController {
     }
 
     public void initializeUI() throws SQLException {
-        LocalDate today = LocalDate.now();
+        today = LocalDate.now();
         currentMonth = today.getMonthValue();
         currentDay = today.getDayOfMonth();
         currentYear = today.getYear();
-        LocalDate firstOfMonth = LocalDate.of(today.getYear(),today.getMonthValue(),1);
+        firstOfMonth = LocalDate.of(today.getYear(),today.getMonthValue(),1);
 
-        buildCalendar();
-        updateCalendarDates(firstOfMonth);
-        buildWeek();
-        updateWeekDates(today);
-        updateApptsTable();
+        initTabs();
+
+        System.out.println(mainTabs.getSelectionModel().getSelectedItem().getText());
+    }
+
+    private void initTabs() {
+        ObservableList<Tab> tabs = mainTabs.getTabs();
+        tabs.forEach((tab) -> {
+            tab.setOnSelectionChanged((e) -> {
+                if (tab.isSelected()) {
+                    if (tab.getText().equals("Week View") && !weekInitialized) {
+                        weekInitialized = true;
+                        buildWeek();
+                        updateWeekDates(today);
+                    } else if (tab.getText().equals("Month View") && !monthInitialized) {
+                        monthInitialized = true;
+                        buildCalendar();
+                        updateCalendarDates(firstOfMonth);
+                    } else if (tab.getText().equals("Manage Customers") && !customersInitialized) {
+                        customersInitialized = true;
+                        try {
+                            updateCustomersTable();
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                    } else if (tab.getText().equals("Manage Appointments") && !appointmentsInitialized) {
+                        appointmentsInitialized = true;
+                        try {
+                            updateApptsTable();
+                        } catch (SQLException throwables) {
+                            throwables.printStackTrace();
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+    private void updateCustomersTable() throws SQLException {
+
     }
 
     private void updateApptsTable() throws SQLException {
-        //tableView.getItems().setAll(parseUserList());
-        //private List<User> parseUserList(){
         SqlDriver db = new SqlDriver();
         List<String[]> appts = db.getApptsForTable();
+
+        apptTable.getColumns().clear();
+        apptTable.getItems().clear();
 
         TableColumn apptIdColumn = new TableColumn("Id");
         apptIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
@@ -134,8 +179,6 @@ public class MainController {
             selectedAppt = (Appointment) apptTable.getSelectionModel().getSelectedItem();
             updateApptBtn.setDisable(false);
             deleteApptBtn.setDisable(false);
-            //nameTextField.setText(selectedPerson.getName());
-            //addressTextField.setText(selectedPerson.getAddress());
         }
     }
 
@@ -256,8 +299,9 @@ public class MainController {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
         AppointmentController apptCtrl = loader.getController();
-        apptCtrl.hiddenUserIdLabel.setText(hiddenUserIdLabel.getText());
-        apptCtrl.hiddenUsernameLabel.setText(hiddenUsernameLabel.getText());
+        System.out.println(hiddenUserIdLabel.getText() + " 260");
+        System.out.println(hiddenUsernameLabel.getText());
+        apptCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -267,17 +311,27 @@ public class MainController {
 
     public void handleUpdateAppt(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
-        root = loader.load();
+
         SqlDriver db = new SqlDriver();
+        System.out.println(selectedAppt);
+        root = loader.load();
         AppointmentController apptCtrl = loader.getController();
-        apptCtrl.hiddenUserIdLabel.setText(hiddenUserIdLabel.getText());
-        apptCtrl.hiddenUsernameLabel.setText(hiddenUsernameLabel.getText());
-        Appointment editingAppt = db.getApptById(selectedAppt.getId());
-        System.out.println(editingAppt.getStart());
-        System.out.println(editingAppt.getEnd());
-        //Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType, apptContact, apptLocation, apptDate, apptStartTime,
-        //                    apptDate, apptFinishTime, customerId[0], userId);
-        apptCtrl.setHeader("Update Appointment");
+        Map<String, String> editingAppt = db.getApptById(selectedAppt.getId());
+
+        apptCtrl.apptTitleField.setText(editingAppt.get("title"));
+        apptCtrl.apptDescField.setText(editingAppt.get("description"));
+        apptCtrl.apptLocationField.setText(editingAppt.get("location"));
+        apptCtrl.apptTypeField.setText(editingAppt.get("type"));
+        apptCtrl.apptHeader.setText("Update Appointment ID " + editingAppt.get("appointment_id"));
+        String customer_name = db.getCustomerNameById(editingAppt.get("customer_id"));
+        apptCtrl.setContactValue(editingAppt.get("contact_id"));
+        apptCtrl.setCustomerValue(customer_name);
+        apptCtrl.setStartAndFinish(editingAppt.get("start"), editingAppt.get("end"));
+        System.out.println(hiddenUserIdLabel.getText() + " 289");
+        System.out.println(hiddenUsernameLabel.getText());
+        apptCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
+        apptCtrl.setApptId(editingAppt.get("appointment_id"));
+
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -285,7 +339,13 @@ public class MainController {
         stage.show();
     }
 
-    public void handleDeleteAppt(ActionEvent actionEvent) {
+    public void handleDeleteAppt(ActionEvent actionEvent) throws SQLException {
+        SqlDriver db = new SqlDriver();
+        Map<String, String> editingAppt = db.getApptById(selectedAppt.getId());
+        boolean deleted = db.deleteApptById(selectedAppt.getId());
+        if (deleted) {
+            updateApptsTable();
+        }
     }
 
     public void handleGoToNextWeek(ActionEvent actionEvent) {
@@ -316,6 +376,11 @@ public class MainController {
         }
         LocalDate date = LocalDate.of(currentYear, currentMonth, 1);
         updateCalendarDates(date);
+    }
+
+    public void setUser(String id, String user) {
+        hiddenUserIdLabel.setText(id);
+        hiddenUsernameLabel.setText(user);
     }
 }
 

@@ -14,7 +14,11 @@
       <Label fx:id="hiddenApptLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUserIdLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUsernameLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
-      <Label fx:id="apptHeader" alignment="CENTER" layoutX="156.0" layoutY="14.0" prefHeight="17.0" prefWidth="149.0" text="Create Appointment" textAlignment="CENTER">
+      <Label fx:id="hiddenContactLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
+      <Label fx:id="hiddenStartLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
+      <Label fx:id="hiddenFinishLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
+      <Label fx:id="hiddenCustomerLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
+      <Label fx:id="apptHeader" alignment="CENTER" layoutX="103.0" layoutY="15.0" prefHeight="18.0" prefWidth="255.0" text="Create Appointment" textAlignment="CENTER">
          <font>
             <Font size="14.0" />
          </font>

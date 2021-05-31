@@ -171,6 +171,11 @@ public class Appointment {
         }
         return false;
     }
+
+    public boolean updateApptById(String apptId) {
+        SqlDriver db = new SqlDriver();
+        return db.updateAppointment(this, apptId);
+    }
 }
 
 

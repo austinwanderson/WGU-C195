@@ -77,8 +77,7 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader((getClass().getResource("main.fxml")));
             root = loader.load();
             MainController mainCtrl = loader.getController();
-            mainCtrl.hiddenUserIdLabel.setText(user.getUserId());
-            mainCtrl.hiddenUsernameLabel.setText(user.getUsername());
+            mainCtrl.setUser(user.getUserId(), user.getUsername());
             stage = (Stage)loginButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

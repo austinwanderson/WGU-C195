@@ -22,7 +22,7 @@
       <Label fx:id="hiddenMainCustomerLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUserIdLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUsernameLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
-      <TabPane prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE" fx:id="mainTabs">
         <tabs>
           <Tab text="Week View">
             <content>
