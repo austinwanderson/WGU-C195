@@ -1,99 +1,89 @@
 package c195.Models;
 
+import c195.SqlDriver;
+
 public class Customer {
 
-    private int customerId; //Auto incremented in database
-    private String customerName;
+    private String customer_id;
+    private String name;
     private String address;
-    private String address2;
-    private String city;
     private String postalCode;
     private String phone;
+    private String division_id;
+    private String division;
     private String country;
-
-
-    public Customer(int customerId, String customerName, String address, String address2, String city, String postalCode,
-                    String phone, String country) {
-        setId(customerId);
-        setName(customerName);
-        setAddress(address);
-        setAddress2(address2);
-        setCity(city);
-        setPostalCode(postalCode);
-        setPhone(phone);
-        setCountry(country);
-    }
-
-    public Customer(int customerId, String customerName) {
-        setId(customerId);
-        setName(customerName);
-    }
+    private String updated_by;
 
     public Customer() {
     }
 
-    public int getId() {
-        return customerId;
+    public Customer(String custName, String custAddr, String custDivisionId, String custZip, String custPhone, String userId) {
+        setName(custName);
+        setAddress(custAddr);
+        setDivisionId(custDivisionId);
+        setPostalCode(custZip);
+        setPhone(custPhone);
+        setUpdatedBy(userId);
     }
 
+    public Customer(String custId, String custName, String custAddr, String custPostalCode, String custCountry, String custDivision, String phone, Boolean forTable) {
+        setId(custId);
+        setName(custName);
+        setAddress(custAddr);
+        setPostalCode(custPostalCode);
+        setCountry(custCountry);
+        setDivision(custDivision);
+        setPhone(phone);
+    }
+
+    public String getId() {
+        return this.customer_id;
+    }
+    public String getUpdatedBy() { return this.updated_by; }
     public String getName() {
-        return customerName;
+        return this.name;
     }
-
     public String getAddress() {
-        return address;
+        if (this.division.length() > 0) {
+            return this.address + ", " + this.division + ", " + this.country + " " + this.postalCode;
+        } else {
+            return this.address;
+        }
     }
-
-    public String getAddress2() {
-        return address2;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
     public String getPostalCode() {
-        return postalCode;
+        return this.postalCode;
     }
-
     public String getPhone() {
-        return phone;
+        return this.phone;
+    }
+    public String getDivisionId() {
+        return this.division_id;
     }
 
-    public String getCountry() {
-        return country;
+    public void setId(String customerId) { this.customer_id = customerId; }
+    public void setUpdatedBy(String userId) { this.updated_by = userId; }
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public void setId(int customerId) {
-
-        this.customerId = customerId;
-    }
-
-    public void setName(String customerName) {
-        this.customerName = customerName;
-    }
-
     public void setAddress(String address) {
         this.address = address;
     }
-
-    public void setAddress2(String address2) {
-        this.address2 = address2;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setCountry(String country) { this.country = country; }
+    public void setDivision(String division) { this.division = division; }
+    public void setDivisionId(String division_id) {
+        this.division_id = division_id;
     }
 
-    public void setCountry(String country) {
-        this.country = country;
+    public Boolean pushToDatabase() {
+        SqlDriver db = new SqlDriver();
+        int appointmentId = db.createCustomer(this);
+        if (appointmentId > 0) {
+            return true;
+        }
+        return false;
     }
 }

@@ -71,14 +71,10 @@ public class AppointmentController {
 
     private void populateCustomerSelect() throws SQLException {
         SqlDriver db = new SqlDriver();
-        System.out.println(hiddenCustomerLabel.getText());
         ObservableList<String[]> n = db.getCustomerNames();
         setNames(n);
         ObservableList<Object> l = FXCollections.observableArrayList();
         n.forEach((name) -> {
-            if (hiddenCustomerLabel.getText() != "") {
-
-            }
             l.add(name[1]);
         });
         apptCustomerSelect.setItems(l);
@@ -133,7 +129,6 @@ public class AppointmentController {
         String apptFinishTime = (apptFinishTimeSelect.getValue() != null) ? apptFinishTimeSelect.getValue().toString() : "";
         String apptCustomer = (apptCustomerSelect.getValue() != null) ? apptCustomerSelect.getValue().toString() : "";
         String userId = hiddenUserIdLabel.getText();
-        System.out.println(userId + " 136");
 
         final String[] customerId = new String[1];
         getNames().forEach((name) -> {
@@ -165,7 +160,6 @@ public class AppointmentController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Scheduler");
-        stage.show();
         stage.show();
     }
 

@@ -1,6 +1,7 @@
 package c195;
 
 import c195.Models.Appointment;
+import c195.Models.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -82,9 +83,15 @@ public class MainController {
     Parent root;
     Stage stage;
     Appointment selectedAppt;
+    Customer selectedCustomer;
 
     @FXML
     public void initialize() throws Exception {
+        weekInitialized = false;
+        monthInitialized = false;
+        customersInitialized = false;
+        appointmentsInitialized = false;
+
         initializeUI();
     }
 
@@ -134,7 +141,41 @@ public class MainController {
     }
 
     private void updateCustomersTable() throws SQLException {
+        SqlDriver db = new SqlDriver();
+        List<String[]> customers = db.getCustomersForTable();
 
+        customerTable.getColumns().clear();
+        customerTable.getItems().clear();
+
+        TableColumn customerIdColumn = new TableColumn("Id");
+        customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("Id"));
+        TableColumn customerNameColumn = new TableColumn("Name");
+        customerNameColumn.setCellValueFactory(new PropertyValueFactory<>("Name"));
+        TableColumn customerAddressColumn = new TableColumn("Address");
+        customerAddressColumn.setCellValueFactory(new PropertyValueFactory<>("Address"));
+        TableColumn customerPhoneColumn = new TableColumn("Phone");
+        customerPhoneColumn.setCellValueFactory(new PropertyValueFactory<>("Phone"));
+
+        customerTable.getColumns().addAll(customerIdColumn, customerNameColumn, customerAddressColumn, customerPhoneColumn);
+        for (String[] cust : customers) {
+            Customer tc = new Customer(cust[0], cust[1], cust[2], cust[3], cust[4], cust[5], cust[6], true);
+            customerTable.getItems().add(tc);
+        }
+
+        customerTable.setOnMouseClicked((event) -> {
+            if (event.getClickCount() == 1) {
+                customerSelect();
+            }
+        });
+
+    }
+
+    private void customerSelect() {
+        if (customerTable.getSelectionModel().getSelectedItem() != null) {
+            selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
+            updateCustomerBtn.setDisable(false);
+            deleteCustomerBtn.setDisable(false);
+        }
     }
 
     private void updateApptsTable() throws SQLException {
@@ -275,7 +316,10 @@ public class MainController {
     }
 
     public void handleAddNewCustomer(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+        FXMLLoader loader = new FXMLLoader((getClass().getResource("customer.fxml")));
+        root = loader.load();
+        CustomerController custCtrl = loader.getController();
+        custCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -283,8 +327,20 @@ public class MainController {
         stage.show();
     }
 
-    public void handleUpdateCustomer(ActionEvent actionEvent) throws IOException {
-        root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customer.fxml")));
+    public void handleUpdateCustomer(ActionEvent actionEvent) throws IOException, SQLException {
+        FXMLLoader loader = new FXMLLoader((getClass().getResource("customer.fxml")));
+        root = loader.load();
+        CustomerController custCtrl = loader.getController();
+        SqlDriver db = new SqlDriver();
+        Map<String, String> editingCustomer = db.getCustomerById(selectedCustomer.getId());
+        custCtrl.custAddressField.setText(editingCustomer.get("address"));
+        custCtrl.custNameField.setText(editingCustomer.get("customer_name"));
+        custCtrl.custAddressField.setText(editingCustomer.get("address"));
+        custCtrl.custPostalCodeField.setText(editingCustomer.get("postal_code"));
+        custCtrl.custPhoneField.setText(editingCustomer.get("phone"));
+        custCtrl.hiddenCustomerIdLabel.setText(editingCustomer.get("customer_id"));
+        custCtrl.hiddenDivisionIdLabel.setText(editingCustomer.get("division_id"));
+        custCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -299,8 +355,6 @@ public class MainController {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
         AppointmentController apptCtrl = loader.getController();
-        System.out.println(hiddenUserIdLabel.getText() + " 260");
-        System.out.println(hiddenUsernameLabel.getText());
         apptCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
@@ -311,9 +365,7 @@ public class MainController {
 
     public void handleUpdateAppt(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
-
         SqlDriver db = new SqlDriver();
-        System.out.println(selectedAppt);
         root = loader.load();
         AppointmentController apptCtrl = loader.getController();
         Map<String, String> editingAppt = db.getApptById(selectedAppt.getId());
@@ -327,8 +379,6 @@ public class MainController {
         apptCtrl.setContactValue(editingAppt.get("contact_id"));
         apptCtrl.setCustomerValue(customer_name);
         apptCtrl.setStartAndFinish(editingAppt.get("start"), editingAppt.get("end"));
-        System.out.println(hiddenUserIdLabel.getText() + " 289");
-        System.out.println(hiddenUsernameLabel.getText());
         apptCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
         apptCtrl.setApptId(editingAppt.get("appointment_id"));
 

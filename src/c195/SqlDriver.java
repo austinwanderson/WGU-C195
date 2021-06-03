@@ -1,6 +1,7 @@
 package c195;
 
 import c195.Models.Appointment;
+import c195.Models.Customer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -172,6 +173,24 @@ public class SqlDriver {
         return null;
     }
 
+    public Map<String, String> getCustomerById(String id) throws SQLException {
+        Statement custQuery = null;
+        ResultSet results = null;
+        custQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = custQuery.executeQuery("select * from customers where customer_id = '" + id + "';");
+        while (results.next()) {
+            Map<String, String> data = new HashMap<String, String>();
+            data.put("customer_id", results.getString("customer_id"));
+            data.put("customer_name", results.getString("customer_name"));
+            data.put("address", results.getString("address"));
+            data.put("postal_code", results.getString("postal_code"));
+            data.put("phone", results.getString("phone"));
+            data.put("division_id", results.getString("division_id"));
+            return data;
+        }
+        return null;
+    }
+
     public boolean updateAppointment(Appointment appointment, String apptId) {
         Statement updateApptStatement = null;
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -206,6 +225,75 @@ public class SqlDriver {
             throwables.printStackTrace();
             return false;
         }
+    }
+
+    public ObservableList<String[]> getCountries() throws SQLException {
+        Statement countryQuery = null;
+        ResultSet results = null;
+        ObservableList<String[]> countries = FXCollections.observableArrayList();
+        countryQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = countryQuery.executeQuery("select country_id, country from countries;");
+        while (results.next()) {
+            String[] n = {results.getString("country_id"), results.getString("country")};
+            countries.add(n);
+        }
+        return countries;
+    }
+
+    public ObservableList<String[]> getStatesProvinces(String countryId) throws SQLException {
+        Statement stateQuery = null;
+        ResultSet results = null;
+        ObservableList<String[]> divisions = FXCollections.observableArrayList();
+        stateQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = stateQuery.executeQuery("select division, division_id, country_id from first_level_divisions where country_id = '" + countryId + "' order by division;");
+        while (results.next()) {
+            String[] n = {results.getString("division"), results.getString("division_id"), results.getString("country_id")};
+            divisions.add(n);
+        }
+        return divisions;
+    }
+
+    public int createCustomer(Customer customer) {
+        Statement createCustomerStatement = null;
+        String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        int newCustomerId;
+        try {
+            String query = "insert into customers (customer_name, address, division_id, postal_code, phone, create_date, " +
+                    "created_by, last_update, last_updated_by) values ('" + customer.getName() +
+                    "','" + customer.getAddress() + "','" + customer.getDivisionId() + "','" + customer.getPostalCode() + "','" +
+                    customer.getPhone() + "','" + now + "','" + customer.getUpdatedBy() + "','" + now +
+                    "','" + customer.getUpdatedBy() +"');";
+            createCustomerStatement = this.db.createStatement();
+            newCustomerId = createCustomerStatement.executeUpdate(query);
+            return newCustomerId;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return -1;
+        }
+    }
+
+    public List<String[]> getCustomersForTable() throws SQLException {
+        List<String[]> customers = new ArrayList<String[]>();
+        Statement customersQuery = null;
+        ResultSet results = null;
+        Map<String, String[]> cd = new HashMap<String, String[]>();
+        ObservableList<String[]> countries = this.getCountries();
+        for (String[] country : countries) {
+            ObservableList<String[]> divisions = this.getStatesProvinces(country[0]);
+            for (String[] division : divisions) {
+                cd.put(division[1], new String[]{country[1], division[0]});
+            }
+        }
+        customersQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = customersQuery.executeQuery("select customer_id, customer_name, address, postal_code, division_id, phone from customers;");
+        int i = 0;
+        while (results.next()) {
+            customers.add(i, new String[]{results.getString("customer_id"), results.getString("customer_name"), results.getString("address"),
+                    results.getString("postal_code"), cd.get(results.getString("division_id"))[0], cd.get(results.getString("division_id"))[1],
+                    results.getString("phone")});
+            i += 1;
+        }
+        return customers;
     }
 }
 
