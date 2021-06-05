@@ -7,6 +7,7 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -294,6 +295,82 @@ public class SqlDriver {
             i += 1;
         }
         return customers;
+    }
+
+    public Boolean updateCustomer(Customer customer, String customerId) {
+        Statement updateCustomerStatement = null;
+        String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        int newCustomer;
+        try {
+            String query = "update customers set customer_name = '" + customer.getName() + "', address = '" + customer.getAddress() +
+                    "', phone = '" + customer.getPhone() + "', division_id = '" + customer.getDivisionId() + "', postal_code = '" + customer.getPostalCode() +
+                    "', last_update = '" + now + "', last_updated_by = '" + customer.getUpdatedBy() + "' where customer_id = '" + customerId + "';";
+
+            System.out.println(query);
+
+            updateCustomerStatement = this.db.createStatement();
+            newCustomer = updateCustomerStatement.executeUpdate(query);
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deleteCustomerById(String id) {
+        Statement deleteStatement = null;
+        int deleted;
+        try {
+            String query = "delete from appointments where customer_id = '" + id + "';";
+            deleteStatement = this.db.createStatement();
+            deleted = deleteStatement.executeUpdate(query);
+
+            query = "delete from customers where customer_id = '" + id + "';";
+            deleteStatement = this.db.createStatement();
+            deleted = deleteStatement.executeUpdate(query);
+            return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            return false;
+        }
+    }
+
+    public Map<Integer, List<String[]>> getApptsByWeek(LocalDate f, LocalDate l) throws SQLException {
+        List<String[]> appointments = new ArrayList<String[]>();
+        Map<Integer, List<String[]>> data = new HashMap<Integer, List<String[]>>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select * from appointments inner join" +
+                " customers on appointments.customer_id = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
+                " where start between '" + f + " 00:00:00" + "' and '" + l + " 23:59:59" + "' order by start asc;";
+        System.out.println(query);
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        int j = 0;
+        LocalDate currentDay = f;
+        while (results.next()) {
+            System.out.println(results.getString("title") + " 353");
+            LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (startDay.equals(currentDay)) {
+                System.out.println("equals");
+                appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
+                        results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
+                        results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
+                        results.getString("contact_id")});
+                i += 1;
+            } else {
+                System.out.println("next day");
+                data.put(j, appointments);
+                currentDay = currentDay.plusDays(1);
+                appointments = new ArrayList<String[]>();
+                results.previous();
+                i = 0;
+                j += 1;
+            }
+        }
+        data.put(j, appointments);
+        return data;
     }
 }
 

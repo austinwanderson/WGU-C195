@@ -44,56 +44,12 @@ public class CustomerController {
     Parent root;
     Stage stage;
 
-    /*
-
-    When adding and updating a customer, text fields are used to collect the following data: customer name, address, postal code, and phone number.
-
--  Customer IDs are auto-generated, and first-level division (i.e., states, provinces) and country data are collected using separate combo boxes.
-
-
-Note: The address text field should not include first-level division and country data. Please use the following examples to format addresses:
-
-•  U.S. address: 123 ABC Street, White Plains
-
-•  Canadian address: 123 ABC Street, Newmarket
-
-•  UK address: 123 ABC Street, Greenwich, London
-
-
--  When updating a customer, the customer data autopopulates in the form.
-
-
-•  Country and first-level division data is prepopulated in separate combo boxes or lists in the user interface for the user to choose. The first-level list should be filtered by the user’s selection of a country (e.g., when choosing U.S., filter so it only shows states).
-
-•  All of the original customer information is displayed on the update form.
-
--  Customer_ID must be disabled.
-
-•  All of the fields can be updated except for Customer_ID.
-
-•  Customer data is displayed using a TableView, including first-level division data. A list of all the customers and their information may be viewed in a TableView, and updates of the data can be performed in text fields on the form.
-
-•  When a customer record is deleted, a custom message should display in the user interface.
-     */
-
     @FXML
     public void initialize() throws Exception {
-        //initializeUI();
-        System.out.println(hiddenDivisionIdLabel.getText() + " 82");
-        if (hiddenDivisionIdLabel.getText() != "") {
-            populateCountrySelect();
-            String[] cp = this.getCountryAndProvince(hiddenDivisionIdLabel.getText());
-            System.out.println(cp[0] + " " + cp[1] + "   85");
-            custCountrySelect.setValue(cp[0]);
-            setCountryValue(cp[0]);
-            populateStateProvinceSelect(cp[0]);
-            setStateValue(cp[1]);
-            custStateSelect.setValue(cp[1]);
-        }
         populateCountrySelect();
     }
 
-    private void setCountryValue(String country) {
+    public void setCountryValue(String country) {
         ObservableList items = custCountrySelect.getItems();
         Boolean done = false;
         int i = 0;
@@ -108,7 +64,7 @@ Note: The address text field should not include first-level division and country
         }
     }
 
-    private void setStateValue(String state) {
+    public void setStateValue(String state) {
         ObservableList items = custStateSelect.getItems();
         Boolean done = false;
         int i = 0;
@@ -172,6 +128,15 @@ Note: The address text field should not include first-level division and country
     }
 
     public void handleCustomerOk(ActionEvent actionEvent) throws IOException {
+
+        if (hiddenCustomerIdLabel.getText() == "") {
+            createNewCustomer();
+        } else {
+            updateCustomer(hiddenCustomerIdLabel.getText());
+        }
+    }
+
+    private void createNewCustomer() throws IOException {
         String custName = custNameField.getText();
         String custAddr = custAddressField.getText();
         String custZip = custPostalCodeField.getText();
@@ -196,7 +161,33 @@ Note: The address text field should not include first-level division and country
                 custErrorMessage.setOpacity(1);
             }
         }
+    }
 
+    private void updateCustomer(String customerId) throws IOException {
+        String custName = custNameField.getText();
+        String custAddr = custAddressField.getText();
+        String custZip = custPostalCodeField.getText();
+        String custPhone = custPhoneField.getText();
+        String custCountry = (custCountrySelect.getValue() != null) ? custCountrySelect.getValue().toString() : "";
+        String custState = (custStateSelect.getValue() != null) ? custStateSelect.getValue().toString() : "";
+        Boolean validated = validateInput(custName, custAddr, custZip, custPhone, custCountry,
+                custState, "");
+        if (validated) {
+            final String[] custDivisionId = new String[1];
+            getDivisions().forEach((division) -> {
+                if (custState == division[0]) {
+                    custDivisionId[0] = division[1];
+                }
+            });
+            Customer updatedCustomer = new Customer(custName, custAddr, custDivisionId[0], custZip, custPhone, hiddenUserIdLabel.getText());
+            Boolean created = updatedCustomer.updateCustomerById(customerId);
+            if (created) {
+                loadHomeScreen();
+            } else {
+                custErrorMessage.setText("There was a DB error.");
+                custErrorMessage.setOpacity(1);
+            }
+        }
     }
 
     private void loadHomeScreen() throws IOException {
@@ -204,7 +195,7 @@ Note: The address text field should not include first-level division and country
         root = loader.load();
         MainController mainCtrl = loader.getController();
         mainCtrl.setUser(hiddenUserIdLabel.getText(), hiddenUsernameLabel.getText());
-        stage = (Stage)ap.getScene().getWindow();
+        stage = (Stage) ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Scheduler");

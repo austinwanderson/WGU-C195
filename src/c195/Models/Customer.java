@@ -44,7 +44,7 @@ public class Customer {
         return this.name;
     }
     public String getAddress() {
-        if (this.division.length() > 0) {
+        if (this.division != null) {
             return this.address + ", " + this.division + ", " + this.country + " " + this.postalCode;
         } else {
             return this.address;
@@ -85,5 +85,10 @@ public class Customer {
             return true;
         }
         return false;
+    }
+
+    public Boolean updateCustomerById(String customerId) {
+        SqlDriver db = new SqlDriver();
+        return db.updateCustomer(this, customerId);
     }
 }

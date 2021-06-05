@@ -2,11 +2,11 @@ package c195;
 
 import c195.Models.Appointment;
 import c195.Models.Customer;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,18 +16,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class MainController {
 
@@ -93,6 +91,7 @@ public class MainController {
         appointmentsInitialized = false;
 
         initializeUI();
+        initWeek();
     }
 
     public void initializeUI() throws SQLException {
@@ -107,15 +106,25 @@ public class MainController {
         System.out.println(mainTabs.getSelectionModel().getSelectedItem().getText());
     }
 
+    private void initWeek() {
+        weekInitialized = true;
+        buildWeek();
+        updateWeekDates(today);
+        try {
+            fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
     private void initTabs() {
         ObservableList<Tab> tabs = mainTabs.getTabs();
         tabs.forEach((tab) -> {
             tab.setOnSelectionChanged((e) -> {
                 if (tab.isSelected()) {
                     if (tab.getText().equals("Week View") && !weekInitialized) {
-                        weekInitialized = true;
-                        buildWeek();
-                        updateWeekDates(today);
+                        initWeek();
                     } else if (tab.getText().equals("Month View") && !monthInitialized) {
                         monthInitialized = true;
                         buildCalendar();
@@ -138,6 +147,33 @@ public class MainController {
                 }
             });
         });
+    }
+
+    private void fillWeekCalendar(LocalDate f, LocalDate l) throws SQLException {
+        SqlDriver db = new SqlDriver();
+        Map<Integer, List<String[]>> data = db.getApptsByWeek(f,l);
+        int i = 0;
+        System.out.println(data.size());
+        for (i=0;i<data.size();i++) {
+            Pane dayPane = (Pane) weekApptNodes[i];
+            VBox dayList = (VBox) dayPane.getChildren().get(0);
+            List<String[]> appts = data.get(i);
+            for (String[] appt : appts) {
+                Label apptLabel = new Label(appt[2]);
+                apptLabel.setPadding(new Insets(5));
+                Font font = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 13);
+                apptLabel.setFont(font);
+                dayList.getChildren().add(apptLabel);
+            }
+        }
+    }
+
+    private void clearWeekAppts() {
+        for (int i=0;i<weekApptNodes.length;i++) {
+            Pane dayPane = (Pane) weekApptNodes[i];
+            VBox dayList = (VBox) dayPane.getChildren().get(0);
+            dayList.getChildren().clear();
+        }
     }
 
     private void updateCustomersTable() throws SQLException {
@@ -238,13 +274,36 @@ public class MainController {
         weekDayNodes = new Node[calendarWidth];
         weekApptNodes = new Node[calendarWidth];
         for (Node child : weekGrid.getChildren()) {
+            System.out.println(child);
             Integer column = GridPane.getColumnIndex(child);
             Integer row = GridPane.getRowIndex(child);
             if (column == null) { column = 0; }
             if (row == null) { row = 0; }
             if (row == 0) { weekDayNodes[column] = child; }
-            if (row == 1) { weekApptNodes[column] = child; }
+            if (row == 1) {
+                child.setOnMouseClicked((event) -> {
+                    Pane dayPane = (Pane) child;
+                    GridPane grid = (GridPane) child.getParent();
+
+                    System.out.println(child.getParent());
+                    System.out.println(child.getParent().getParent());
+                    int i = 0;
+                    LocalDate daySelected = firstDayOfWeek;
+                    while (i < 7) {
+                        if (grid.getChildren().get(i) == child) {
+                            daySelected = firstDayOfWeek.plusDays(i);
+                        }
+                        i += 1;
+                    }
+                    fillDayAppointments(daySelected, weekAccordionApptList);
+                });
+                weekApptNodes[column] = child;
+            }
         }
+    }
+
+    private void fillDayAppointments(LocalDate daySelected, Accordion list) {
+        //TODO
     }
 
     private void updateWeekDates(LocalDate day) {
@@ -333,14 +392,17 @@ public class MainController {
         CustomerController custCtrl = loader.getController();
         SqlDriver db = new SqlDriver();
         Map<String, String> editingCustomer = db.getCustomerById(selectedCustomer.getId());
+        custCtrl.customerHeader.setText("Update Customer ID " + editingCustomer.get("customer_id"));
         custCtrl.custAddressField.setText(editingCustomer.get("address"));
         custCtrl.custNameField.setText(editingCustomer.get("customer_name"));
-        custCtrl.custAddressField.setText(editingCustomer.get("address"));
         custCtrl.custPostalCodeField.setText(editingCustomer.get("postal_code"));
         custCtrl.custPhoneField.setText(editingCustomer.get("phone"));
         custCtrl.hiddenCustomerIdLabel.setText(editingCustomer.get("customer_id"));
         custCtrl.hiddenDivisionIdLabel.setText(editingCustomer.get("division_id"));
         custCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
+        String[] cp = custCtrl.getCountryAndProvince(editingCustomer.get("division_id"));
+        custCtrl.setCountryValue(cp[0]);
+        custCtrl.setStateValue(cp[1]);
         stage = (Stage)ap.getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
@@ -348,7 +410,14 @@ public class MainController {
         stage.show();
     }
 
-    public void handleDeleteCustomer(ActionEvent actionEvent) {
+    public void handleDeleteCustomer(ActionEvent actionEvent) throws SQLException {
+        SqlDriver db = new SqlDriver();
+        Map<String, String> editingAppt = db.getCustomerById(selectedCustomer.getId());
+        boolean deleted = db.deleteCustomerById(selectedCustomer.getId());
+        if (deleted) {
+            updateCustomersTable();
+            updateApptsTable();
+        }
     }
 
     public void handleCreateNewAppt(ActionEvent actionEvent) throws IOException {
@@ -398,14 +467,18 @@ public class MainController {
         }
     }
 
-    public void handleGoToNextWeek(ActionEvent actionEvent) {
+    public void handleGoToNextWeek(ActionEvent actionEvent) throws SQLException {
         firstDayOfWeek = lastDayOfWeek.plusDays(2);
+        clearWeekAppts();
         updateWeekDates(firstDayOfWeek);
+        fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
     }
 
-    public void handleGoToPreviousWeek(ActionEvent actionEvent) {
+    public void handleGoToPreviousWeek(ActionEvent actionEvent) throws SQLException {
         lastDayOfWeek = firstDayOfWeek.minusDays(2);
+        clearWeekAppts();
         updateWeekDates(lastDayOfWeek);
+        fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
     }
 
     public void handleGoToNextMonth(ActionEvent actionEvent) {
