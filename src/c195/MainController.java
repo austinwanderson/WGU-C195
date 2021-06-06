@@ -7,18 +7,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -77,6 +77,7 @@ public class MainController {
     public static Boolean monthInitialized = false;
     public static Boolean customersInitialized = false;
     public static Boolean appointmentsInitialized = false;
+    public Map<Integer, List<String[]>> weekData;
 
     Parent root;
     Stage stage;
@@ -152,8 +153,8 @@ public class MainController {
     private void fillWeekCalendar(LocalDate f, LocalDate l) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<Integer, List<String[]>> data = db.getApptsByWeek(f,l);
+        weekData = data;
         int i = 0;
-        System.out.println(data.size());
         for (i=0;i<data.size();i++) {
             Pane dayPane = (Pane) weekApptNodes[i];
             VBox dayList = (VBox) dayPane.getChildren().get(0);
@@ -161,7 +162,7 @@ public class MainController {
             for (String[] appt : appts) {
                 Label apptLabel = new Label(appt[2]);
                 apptLabel.setPadding(new Insets(5));
-                Font font = Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 13);
+                Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 13);
                 apptLabel.setFont(font);
                 dayList.getChildren().add(apptLabel);
             }
@@ -282,27 +283,64 @@ public class MainController {
             if (row == 0) { weekDayNodes[column] = child; }
             if (row == 1) {
                 child.setOnMouseClicked((event) -> {
-                    Pane dayPane = (Pane) child;
                     GridPane grid = (GridPane) child.getParent();
-
-                    System.out.println(child.getParent());
-                    System.out.println(child.getParent().getParent());
                     int i = 0;
+                    int index = 0;
                     LocalDate daySelected = firstDayOfWeek;
                     while (i < 7) {
-                        if (grid.getChildren().get(i) == child) {
+                        Pane selectedPane = (Pane) grid.getChildren().get(i+7);
+                        Pane dayPane = (Pane) grid.getChildren().get(i);
+                        if (selectedPane == child) {
+                            index = i;
+                            selectedPane.setBorder(new Border(new BorderStroke(Color.BLUE,
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                            dayPane.setBorder(new Border(new BorderStroke(Color.BLUE,
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                             daySelected = firstDayOfWeek.plusDays(i);
+                        } else {
+                            selectedPane.setBorder(new Border(new BorderStroke(Color.GREY,
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                            dayPane.setBorder(new Border(new BorderStroke(Color.GREY,
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
                         }
                         i += 1;
                     }
-                    fillDayAppointments(daySelected, weekAccordionApptList);
+                    fillDayAppointments(daySelected, weekAccordionApptList, index);
                 });
                 weekApptNodes[column] = child;
             }
         }
     }
 
-    private void fillDayAppointments(LocalDate daySelected, Accordion list) {
+    private void fillDayAppointments(LocalDate daySelected, Accordion list, int index) {
+        System.out.println(daySelected);
+        System.out.println(list);
+        System.out.println(index);
+        list.getPanes().clear();
+        List<String[]> appts = weekData.get(index);
+        for (String[] appt : appts) {
+            GridPane grid = new GridPane();
+            grid.setVgap(4);
+            grid.setPadding(new Insets(5, 5, 5, 5));
+            grid.add(new Label("Appointment ID:  " + appt[1]),0,0);
+            grid.add(new Label("Description:  " + appt[3]),0,1);
+            grid.add(new Label("Location:  " + appt[4]),0,2);
+            grid.add(new Label("Type:  " + appt[5]),0,3);
+            grid.add(new Label("Start:  " + appt[0]),0,4);
+            grid.add(new Label("End:  " + appt[6]),0,5);
+            grid.add(new Label("Customer:  " + appt[7]),0,6);
+            grid.add(new Label("Customer ID:  " + appt[10]),0,7);
+            grid.add(new Label("Contact:  " + appt[8]),0,8);
+            grid.add(new Label("Contact ID:  " + appt[11]),0,9);
+            //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
+            TitledPane titledPane = new TitledPane(appt[2], grid);
+            list.getPanes().add(titledPane);
+        }
+
+        //appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
+        //                        results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
+        //                        results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
+        //                        results.getString("contact_id")});
         //TODO
     }
 

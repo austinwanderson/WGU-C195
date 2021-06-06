@@ -344,23 +344,19 @@ public class SqlDriver {
         String query = "select * from appointments inner join" +
                 " customers on appointments.customer_id = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
                 " where start between '" + f + " 00:00:00" + "' and '" + l + " 23:59:59" + "' order by start asc;";
-        System.out.println(query);
         results = apptsQuery.executeQuery(query);
         int i = 0;
         int j = 0;
         LocalDate currentDay = f;
         while (results.next()) {
-            System.out.println(results.getString("title") + " 353");
             LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             if (startDay.equals(currentDay)) {
-                System.out.println("equals");
                 appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
                         results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
                         results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
                         results.getString("contact_id")});
                 i += 1;
             } else {
-                System.out.println("next day");
                 data.put(j, appointments);
                 currentDay = currentDay.plusDays(1);
                 appointments = new ArrayList<String[]>();
