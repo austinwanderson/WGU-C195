@@ -90,7 +90,6 @@ public class CustomerController {
         custCountrySelect.setItems(l);
         custCountrySelect.setOnAction(event -> {
             String selectedCountry = custCountrySelect.getValue().toString();
-            System.out.println(selectedCountry);
             try {
                 populateStateProvinceSelect(selectedCountry);
             } catch (SQLException throwables) {

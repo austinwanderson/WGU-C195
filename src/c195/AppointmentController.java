@@ -174,7 +174,6 @@ public class AppointmentController {
         String apptFinishTime = (apptFinishTimeSelect.getValue() != null) ? apptFinishTimeSelect.getValue().toString() : "";
         String apptCustomer = (apptCustomerSelect.getValue() != null) ? apptCustomerSelect.getValue().toString() : "";
         String userId = hiddenUserIdLabel.getText();
-        System.out.println(userId + " 180");
 
         final String[] customerId = new String[1];
         getNames().forEach((name) -> {
@@ -186,7 +185,6 @@ public class AppointmentController {
         Boolean validated = validateInput(apptTitle, apptDesc, apptContact, apptLocation, apptType, apptDate,
                 apptStartTime, apptFinishTime,customerId[0], userId, true, apptId);
         if (validated) {
-            System.out.println("Updating appt: " + apptId);
             Appointment newAppt = new Appointment(apptTitle, apptDesc, apptType, apptContact, apptLocation, apptDate, apptStartTime,
                     apptDate, apptFinishTime, customerId[0], userId);
             boolean updated = newAppt.updateApptById(apptId);
@@ -268,7 +266,6 @@ public class AppointmentController {
         while (j.hasNext() && !done) {
             String value = j.next().toString();
             if (value.equals(customer)) {
-                System.out.println("true");
                 apptCustomerSelect.getSelectionModel().select(i);
                 done = true;
             }
@@ -285,7 +282,6 @@ public class AppointmentController {
         while (j.hasNext() && !done) {
             String value = j.next().toString().split(":")[0];
             if (value.equals(contact)) {
-                System.out.println("true");
                 apptContactSelect.getSelectionModel().select(i);
                 done = true;
             }
@@ -300,8 +296,6 @@ public class AppointmentController {
         String start = st.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST";
         String finish = fn.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST";
         String date = st.format(DateTimeFormatter.ofPattern("d/MM/yyyy"));
-        System.out.println(start);
-        System.out.println(finish);
 
         ObservableList items = apptStartTimeSelect.getItems();
         Boolean done = false;

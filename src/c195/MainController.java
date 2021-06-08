@@ -7,7 +7,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -60,6 +58,8 @@ public class MainController {
     @FXML public Label hiddenMainCustomerLabel;
     @FXML public Label hiddenUsernameLabel;
     @FXML public Label hiddenUserIdLabel;
+    @FXML public Label noApptsLabelWeek;
+    @FXML public Label noApptsLabelMonth;
 
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
@@ -73,11 +73,14 @@ public class MainController {
     public static LocalDate lastDayOfWeek;
     public static LocalDate today;
     public static LocalDate firstOfMonth;
+    public static LocalDate lastOfMonth;
     public static Boolean weekInitialized = false;
     public static Boolean monthInitialized = false;
     public static Boolean customersInitialized = false;
     public static Boolean appointmentsInitialized = false;
     public Map<Integer, List<String[]>> weekData;
+    public Map<Integer, List<String[]>> monthData;
+    public Map<Integer, VBox> monthNodes;
 
     Parent root;
     Stage stage;
@@ -101,10 +104,9 @@ public class MainController {
         currentDay = today.getDayOfMonth();
         currentYear = today.getYear();
         firstOfMonth = LocalDate.of(today.getYear(),today.getMonthValue(),1);
+        lastOfMonth = firstOfMonth.plusMonths(1).minusDays(1);
 
         initTabs();
-
-        System.out.println(mainTabs.getSelectionModel().getSelectedItem().getText());
     }
 
     private void initWeek() {
@@ -116,7 +118,17 @@ public class MainController {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+    }
 
+    private void initMonth() {
+        monthInitialized = true;
+        buildCalendar();
+        updateCalendarDates(firstOfMonth);
+        try {
+            fillMonthCalendar(firstOfMonth, lastOfMonth);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
     private void initTabs() {
@@ -127,9 +139,7 @@ public class MainController {
                     if (tab.getText().equals("Week View") && !weekInitialized) {
                         initWeek();
                     } else if (tab.getText().equals("Month View") && !monthInitialized) {
-                        monthInitialized = true;
-                        buildCalendar();
-                        updateCalendarDates(firstOfMonth);
+                        initMonth();
                     } else if (tab.getText().equals("Manage Customers") && !customersInitialized) {
                         customersInitialized = true;
                         try {
@@ -150,6 +160,26 @@ public class MainController {
         });
     }
 
+    private void fillMonthCalendar(LocalDate f, LocalDate l) throws SQLException {
+        SqlDriver db = new SqlDriver();
+        int daysInMonth = getDaysInMonth(f.getYear(), f.getMonthValue());
+        Map<Integer, List<String[]>> data = db.getApptsByMonth(f,l, daysInMonth);
+        monthData = data;
+        int i = 0;
+        for (i=1;i<=data.size();i++) {
+            VBox dayList = (VBox) monthNodes.get(i);
+            List<String[]> appts = data.get(i-1);
+            String numOfAppts = ((appts.size() == 0) ? "" : (appts.size() == 1) ? String.valueOf(appts.size()) +
+                    " appointment" : String.valueOf(appts.size()) + " appointments");
+
+            Label apptLabel = new Label(numOfAppts);
+            apptLabel.setPadding(new Insets(3));
+            Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 13);
+            apptLabel.setFont(font);
+            dayList.getChildren().add(apptLabel);
+        }
+    }
+
     private void fillWeekCalendar(LocalDate f, LocalDate l) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<Integer, List<String[]>> data = db.getApptsByWeek(f,l);
@@ -161,7 +191,7 @@ public class MainController {
             List<String[]> appts = data.get(i);
             for (String[] appt : appts) {
                 Label apptLabel = new Label(appt[2]);
-                apptLabel.setPadding(new Insets(5));
+                apptLabel.setPadding(new Insets(3));
                 Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 13);
                 apptLabel.setFont(font);
                 dayList.getChildren().add(apptLabel);
@@ -174,6 +204,13 @@ public class MainController {
             Pane dayPane = (Pane) weekApptNodes[i];
             VBox dayList = (VBox) dayPane.getChildren().get(0);
             dayList.getChildren().clear();
+        }
+    }
+
+    private void clearMonthAppts() {
+        for (int i=1;i<=monthNodes.size();i++) {
+            VBox dayList = (VBox) monthNodes.get(i);
+            dayList.getChildren().remove(1);
         }
     }
 
@@ -267,6 +304,34 @@ public class MainController {
             Integer row = GridPane.getRowIndex(child);
             if (column == null) { column = 0; }
             if (row == null) { row = 0; }
+            child.setOnMouseClicked((event) -> {
+                GridPane grid = (GridPane) child.getParent();
+                int i = 0;
+                int index = 0;
+                LocalDate daySelected = firstOfMonth;
+                while (i < 42) {
+                    Pane selectedPane = (Pane) grid.getChildren().get(i);
+                    if (selectedPane == child) {
+                        index = i;
+                        VBox dayVbox = (VBox) selectedPane.getChildren().get(0);
+                        Label dayLabel = (Label) dayVbox.getChildren().get(0);
+                        if (!dayLabel.getText().equals("")) {
+                            fillDayAppointmentsMonth(monthAccordionApptList, Integer.valueOf(dayLabel.getText()));
+                        }
+                        selectedPane.setBorder(new Border(new BorderStroke(Color.BLUE,
+                                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
+                        selectedPane.setBorder(new Border(new BorderStroke(Color.BLUE,
+                                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(3))));
+                        //daySelected = firstOfMonth.plusDays(i);
+                    } else {
+                        selectedPane.setBorder(new Border(new BorderStroke(Color.GREY,
+                                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                        selectedPane.setBorder(new Border(new BorderStroke(Color.GREY,
+                                BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                    }
+                    i += 1;
+                }
+            });
             calendarNodes[column][row] = child;
         }
     }
@@ -275,7 +340,6 @@ public class MainController {
         weekDayNodes = new Node[calendarWidth];
         weekApptNodes = new Node[calendarWidth];
         for (Node child : weekGrid.getChildren()) {
-            System.out.println(child);
             Integer column = GridPane.getColumnIndex(child);
             Integer row = GridPane.getRowIndex(child);
             if (column == null) { column = 0; }
@@ -293,9 +357,9 @@ public class MainController {
                         if (selectedPane == child) {
                             index = i;
                             selectedPane.setBorder(new Border(new BorderStroke(Color.BLUE,
-                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
                             dayPane.setBorder(new Border(new BorderStroke(Color.BLUE,
-                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+                                    BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
                             daySelected = firstDayOfWeek.plusDays(i);
                         } else {
                             selectedPane.setBorder(new Border(new BorderStroke(Color.GREY,
@@ -305,43 +369,71 @@ public class MainController {
                         }
                         i += 1;
                     }
-                    fillDayAppointments(daySelected, weekAccordionApptList, index);
+                    fillDayAppointmentsWeek(weekAccordionApptList, index);
                 });
                 weekApptNodes[column] = child;
             }
         }
     }
 
-    private void fillDayAppointments(LocalDate daySelected, Accordion list, int index) {
-        System.out.println(daySelected);
-        System.out.println(list);
-        System.out.println(index);
+    private void fillDayAppointmentsMonth(Accordion list, int index) {
+        list.getPanes().clear();
+        List<String[]> appts = monthData.get(index-1);
+        if (appts.isEmpty()) {
+            noApptsLabelMonth.setOpacity(1);
+            list.setOpacity(0);
+        } else {
+            for (String[] appt : appts) {
+                GridPane grid = new GridPane();
+                grid.setVgap(4);
+                grid.setPadding(new Insets(5, 5, 5, 5));
+                grid.add(new Label("Appointment ID:  " + appt[1]), 0, 0);
+                grid.add(new Label("Description:  " + appt[3]), 0, 1);
+                grid.add(new Label("Location:  " + appt[4]), 0, 2);
+                grid.add(new Label("Type:  " + appt[5]), 0, 3);
+                grid.add(new Label("Start:  " + appt[0]), 0, 4);
+                grid.add(new Label("End:  " + appt[6]), 0, 5);
+                grid.add(new Label("Customer:  " + appt[7]), 0, 6);
+                grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
+                grid.add(new Label("Contact:  " + appt[8]), 0, 8);
+                grid.add(new Label("Contact ID:  " + appt[11]), 0, 9);
+                //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
+                TitledPane titledPane = new TitledPane(appt[2], grid);
+                list.getPanes().add(titledPane);
+            }
+            noApptsLabelMonth.setOpacity(0);
+            list.setOpacity(1);
+        }
+    }
+
+    private void fillDayAppointmentsWeek(Accordion list, int index) {
         list.getPanes().clear();
         List<String[]> appts = weekData.get(index);
-        for (String[] appt : appts) {
-            GridPane grid = new GridPane();
-            grid.setVgap(4);
-            grid.setPadding(new Insets(5, 5, 5, 5));
-            grid.add(new Label("Appointment ID:  " + appt[1]),0,0);
-            grid.add(new Label("Description:  " + appt[3]),0,1);
-            grid.add(new Label("Location:  " + appt[4]),0,2);
-            grid.add(new Label("Type:  " + appt[5]),0,3);
-            grid.add(new Label("Start:  " + appt[0]),0,4);
-            grid.add(new Label("End:  " + appt[6]),0,5);
-            grid.add(new Label("Customer:  " + appt[7]),0,6);
-            grid.add(new Label("Customer ID:  " + appt[10]),0,7);
-            grid.add(new Label("Contact:  " + appt[8]),0,8);
-            grid.add(new Label("Contact ID:  " + appt[11]),0,9);
-            //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
-            TitledPane titledPane = new TitledPane(appt[2], grid);
-            list.getPanes().add(titledPane);
+        if (appts.isEmpty()) {
+            noApptsLabelWeek.setOpacity(1);
+            list.setOpacity(0);
+        } else {
+            for (String[] appt : appts) {
+                GridPane grid = new GridPane();
+                grid.setVgap(4);
+                grid.setPadding(new Insets(5, 5, 5, 5));
+                grid.add(new Label("Appointment ID:  " + appt[1]), 0, 0);
+                grid.add(new Label("Description:  " + appt[3]), 0, 1);
+                grid.add(new Label("Location:  " + appt[4]), 0, 2);
+                grid.add(new Label("Type:  " + appt[5]), 0, 3);
+                grid.add(new Label("Start:  " + appt[0]), 0, 4);
+                grid.add(new Label("End:  " + appt[6]), 0, 5);
+                grid.add(new Label("Customer:  " + appt[7]), 0, 6);
+                grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
+                grid.add(new Label("Contact:  " + appt[8]), 0, 8);
+                grid.add(new Label("Contact ID:  " + appt[11]), 0, 9);
+                //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
+                TitledPane titledPane = new TitledPane(appt[2], grid);
+                list.getPanes().add(titledPane);
+            }
+            noApptsLabelWeek.setOpacity(0);
+            list.setOpacity(1);
         }
-
-        //appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
-        //                        results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
-        //                        results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
-        //                        results.getString("contact_id")});
-        //TODO
     }
 
     private void updateWeekDates(LocalDate day) {
@@ -382,6 +474,7 @@ public class MainController {
     }
 
     public void updateCalendarDates(LocalDate firstOfMonth) {
+        Map<Integer, VBox> mn = new HashMap<Integer, VBox>();
         int dayCount = 1;
         int firstOfMonthDay = firstOfMonth.getDayOfWeek().getValue();
         if (firstOfMonthDay == 7) {
@@ -397,6 +490,7 @@ public class MainController {
                     firstOfMonthDay -= 1;
                     day.setText("");
                 } else if (dayCount <= daysInMonth) {
+                    mn.put(dayCount,dayVbox);
                     day.setText(String.valueOf(dayCount));
                     dayCount++;
                 } else {
@@ -404,7 +498,7 @@ public class MainController {
                 }
             }
         }
-
+        monthNodes = mn;
         String monthName = firstOfMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.US);
         if (monthYearLabel == null) {
             monthYearLabel = (Label) Main.main_scene.lookup("#monthYearLabel");
@@ -519,24 +613,32 @@ public class MainController {
         fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
     }
 
-    public void handleGoToNextMonth(ActionEvent actionEvent) {
+    public void handleGoToNextMonth(ActionEvent actionEvent) throws SQLException {
         currentMonth += 1;
+        firstOfMonth = firstOfMonth.plusMonths(1);
+        lastOfMonth = firstOfMonth.plusMonths(1).minusDays(1);
         if (currentMonth > 12) {
             currentMonth = 1;
             currentYear += 1;
         }
+        clearMonthAppts();
         LocalDate date = LocalDate.of(currentYear, currentMonth, 1);
         updateCalendarDates(date);
+        fillMonthCalendar(firstOfMonth,lastOfMonth);
     }
 
-    public void handleGoToPreviousMonth(ActionEvent actionEvent) {
+    public void handleGoToPreviousMonth(ActionEvent actionEvent) throws SQLException {
         currentMonth -= 1;
+        firstOfMonth = firstOfMonth.minusMonths(1);
+        lastOfMonth = firstOfMonth.plusMonths(1).minusDays(1);
         if (currentMonth == 0) {
             currentMonth = 12;
             currentYear -= 1;
         }
+        clearMonthAppts();
         LocalDate date = LocalDate.of(currentYear, currentMonth, 1);
         updateCalendarDates(date);
+        fillMonthCalendar(firstOfMonth,lastOfMonth);
     }
 
     public void setUser(String id, String user) {

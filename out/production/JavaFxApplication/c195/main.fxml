@@ -22,12 +22,13 @@
       <Label fx:id="hiddenMainCustomerLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUserIdLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
       <Label fx:id="hiddenUsernameLabel" layoutX="0.0" layoutY="0.0" opacity="0" text="" />
-      <TabPane prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE" fx:id="mainTabs">
+      <TabPane fx:id="mainTabs" prefHeight="620.0" prefWidth="953.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Week View">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" style="-fx-background-color: white;">
                      <children>
+                        <Label fx:id="noApptsLabelWeek" layoutX="729.0" layoutY="119.0" opacity="0.0" text="No appointments for the selected day." />
                         <Label layoutX="132.0" layoutY="31.0" text="Monday" />
                         <Label layoutX="232.0" layoutY="31.0" text="Tuesday" />
                         <Label layoutX="323.0" layoutY="31.0" text="Wednesday" />
@@ -108,35 +109,35 @@
                                  </children></Pane>
                               <Pane layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="501.0" prefWidth="100.0" fx:id="sundayBox"/>
+                                    <VBox fx:id="sundayBox" prefHeight="501.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="112.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="500.0" prefWidth="100.0" fx:id="mondayBox"/>
+                                    <VBox fx:id="mondayBox" prefHeight="500.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="214.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="501.0" prefWidth="100.0" fx:id="tuesdayBox"/>
+                                    <VBox fx:id="tuesdayBox" prefHeight="501.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="316.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="3" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="501.0" prefWidth="100.0" fx:id="wednesdayBox"/>
+                                    <VBox fx:id="wednesdayBox" prefHeight="501.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="418.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="4" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="503.0" prefWidth="100.0" fx:id="thursdayBox"/>
+                                    <VBox fx:id="thursdayBox" prefHeight="503.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="519.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey;" GridPane.columnIndex="5" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="501.0" prefWidth="100.0" fx:id="fridayBox"/>
+                                    <VBox fx:id="fridayBox" prefHeight="501.0" prefWidth="100.0" />
                                  </children></Pane>
                               <Pane layoutX="620.0" layoutY="10.0" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #dbf7ff; -fx-border-color: grey;" GridPane.columnIndex="6" GridPane.rowIndex="1">
                                  <children>
-                                    <VBox prefHeight="503.0" prefWidth="100.0" fx:id="saturdayBox"/>
+                                    <VBox fx:id="saturdayBox" prefHeight="503.0" prefWidth="100.0" />
                                  </children></Pane>
                            </children>
                         </GridPane>
-                        <Accordion fx:id="weekAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="539.0" prefWidth="242.0">
+                        <Accordion fx:id="weekAccordionApptList" layoutX="711.0" layoutY="50.0" opacity="0.0" prefHeight="539.0" prefWidth="242.0">
                           <panes>
                             <TitledPane animated="false" text="untitled 1">
                               <content>
@@ -178,6 +179,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="507.0" prefWidth="722.0" style="-fx-background-color: white;">
                      <children>
+                        <Label fx:id="noApptsLabelMonth" layoutX="729.0" layoutY="119.0" opacity="0.0" text="No appointments for the selected day." />
                         <GridPane fx:id="calendarGrid" layoutY="50.0" prefHeight="539.0" prefWidth="711.0" style="-fx-border-color: black;">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -206,7 +208,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="1">
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="1" GridPane.columnIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -215,7 +217,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="2">
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="2" GridPane.columnIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -224,7 +226,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="3">
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="3" GridPane.columnIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -233,7 +235,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="4">
+                              <Pane layoutX="11.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="4" GridPane.columnIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -242,7 +244,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="370.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="5">
+                              <Pane layoutX="11.0" layoutY="370.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.rowIndex="5" GridPane.columnIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -251,7 +253,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2">
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="2" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -305,7 +307,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="181.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4">
+                              <Pane layoutX="181.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="4" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -359,7 +361,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="351.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6">
+                              <Pane layoutX="351.0" layoutY="84.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: #dbf7ff;" GridPane.columnIndex="6" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -413,7 +415,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1">
+                              <Pane layoutX="11.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -458,7 +460,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                              <Pane prefHeight="200.0" prefWidth="200.0" layoutX="96.0" layoutY="11.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -467,7 +469,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3">
+                              <Pane layoutX="96.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="3" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -521,7 +523,7 @@
                                     </VBox>
                                  </children>
                               </Pane>
-                              <Pane layoutX="266.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5">
+                              <Pane layoutX="266.0" layoutY="11.0" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: grey; -fx-background-color: white;" GridPane.columnIndex="5" GridPane.rowIndex="0">
                                  <children>
                                     <VBox prefHeight="119.0" prefWidth="100.0">
                                        <children>
@@ -599,7 +601,7 @@
                               <Font size="10.0" />
                            </font>
                         </Button>
-                        <Accordion fx:id="monthAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="538.0" prefWidth="242.0">
+                        <Accordion fx:id="monthAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="538.0" prefWidth="242.0" opacity="0">
                           <panes>
                             <TitledPane animated="false" text="untitled 1">
                               <content>

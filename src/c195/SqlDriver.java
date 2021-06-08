@@ -74,7 +74,6 @@ public class SqlDriver {
     public Boolean checkValidApptTime(String customerId, ZonedDateTime start, ZonedDateTime finish, String apptId) throws SQLException {
         String st = start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String ft = finish.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(apptId + " 75");
         Statement apptQuery = null;
         ResultSet results = null;
         String query = "select * from appointments where customer_id = '" + customerId + "' and " +
@@ -82,7 +81,6 @@ public class SqlDriver {
         apptQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         results = apptQuery.executeQuery(query);
         while (results.next()) {
-            System.out.println(results.getString("appointment_id").equals(apptId) + " 82");
             if (!results.getString("appointment_id").equals(apptId)) {
                 return false;
             }
@@ -203,8 +201,6 @@ public class SqlDriver {
                     "', customer_id = '" + appointment.getCustomerId() + "', user_id = '" + appointment.getCreatedById() + "', contact_id = '" +
                     appointment.getContactId() + "' where appointment_id = '" + apptId + "';";
 
-            System.out.println(query);
-
             updateApptStatement = this.db.createStatement();
             newAppt = updateApptStatement.executeUpdate(query);
             return true;
@@ -306,8 +302,6 @@ public class SqlDriver {
                     "', phone = '" + customer.getPhone() + "', division_id = '" + customer.getDivisionId() + "', postal_code = '" + customer.getPostalCode() +
                     "', last_update = '" + now + "', last_updated_by = '" + customer.getUpdatedBy() + "' where customer_id = '" + customerId + "';";
 
-            System.out.println(query);
-
             updateCustomerStatement = this.db.createStatement();
             newCustomer = updateCustomerStatement.executeUpdate(query);
             return true;
@@ -341,8 +335,8 @@ public class SqlDriver {
         Statement apptsQuery = null;
         ResultSet results = null;
         apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-        String query = "select * from appointments inner join" +
-                " customers on appointments.customer_id = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
+        String query = "select * from appointments inner join customers on appointments.customer_id" +
+                " = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
                 " where start between '" + f + " 00:00:00" + "' and '" + l + " 23:59:59" + "' order by start asc;";
         results = apptsQuery.executeQuery(query);
         int i = 0;
@@ -366,6 +360,56 @@ public class SqlDriver {
             }
         }
         data.put(j, appointments);
+        int k = 0;
+        while (k < 7) {
+            if (!data.containsKey(k)) {
+                data.put(k, new ArrayList<String[]>());
+            }
+            k += 1;
+        }
+
+        return data;
+    }
+
+    public Map<Integer, List<String[]>> getApptsByMonth(LocalDate f, LocalDate l, int lengthOfMonth) throws SQLException {
+        List<String[]> appointments = new ArrayList<String[]>();
+        Map<Integer, List<String[]>> data = new HashMap<Integer, List<String[]>>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select * from appointments inner join customers on appointments.customer_id" +
+                " = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
+                " where start between '" + f + " 00:00:00" + "' and '" + l + " 23:59:59" + "' order by start asc;";
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        int j = 0;
+        LocalDate currentDay = f;
+        while (results.next()) {
+            LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            if (startDay.equals(currentDay)) {
+                appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
+                        results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
+                        results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
+                        results.getString("contact_id")});
+                i += 1;
+            } else {
+                data.put(j, appointments);
+                currentDay = currentDay.plusDays(1);
+                appointments = new ArrayList<String[]>();
+                results.previous();
+                i = 0;
+                j += 1;
+            }
+        }
+        data.put(j, appointments);
+        int k = 0;
+        while (k < lengthOfMonth) {
+            if (!data.containsKey(k)) {
+                data.put(k, new ArrayList<String[]>());
+            }
+            k += 1;
+        }
+
         return data;
     }
 }
