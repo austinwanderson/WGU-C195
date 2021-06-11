@@ -22,6 +22,14 @@ import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * LoginController handles all events for the login UI.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class LoginController {
 
     @FXML private GridPane ap;
@@ -41,6 +49,10 @@ public class LoginController {
     Parent root;
     Stage stage;
 
+    /**
+     * Called when the login is initialized displaying the zone id
+     * and filling the language choice select.
+     */
     @FXML
     public void initialize() {
         loginZoneLabel.setText(java.time.ZoneId.systemDefault().toString());
@@ -48,6 +60,11 @@ public class LoginController {
         setLoginLanguage("");
     }
 
+    /**
+     * Changes the login language of the UI components.
+     *
+     * @param language language selected
+     */
     public void setLoginLanguage(String language) {
         try {
             ResourceBundle rb;
@@ -70,6 +87,13 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles the login button clicked event.
+     *
+     * @param actionEvent click event
+     * @exception SQLException db error
+     * @exception IOException
+     */
     public void handleLoginClicked(ActionEvent actionEvent) throws IOException, SQLException {
         boolean loggedin = verifyLogin(loginUsernameField.getText(), loginPasswordField.getText());
         if (loggedin) {
@@ -78,7 +102,8 @@ public class LoginController {
             root = loader.load();
             MainController mainCtrl = loader.getController();
             mainCtrl.setUser(user.getUserId(), user.getUsername());
-            stage = (Stage)loginButton.getScene().getWindow();
+            mainCtrl.getApptsWithinFifteenMinutes();
+            stage = (Stage) loginButton.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Scheduler");
@@ -86,6 +111,11 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles when a user selects a new language.
+     *
+     * @param actionEvent click event
+     */
     public void handleLanguageSelect(ActionEvent actionEvent) {
         String lang = languageChoiceSelect.getValue().toString();
         if (lang == "French") {
@@ -95,6 +125,14 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles verifying login credentials
+     *
+     * @param username given username
+     * @param password given password
+     * @return boolean true if credentials are accepted.
+     * @exception SQLException db error
+     */
     public boolean verifyLogin(String username, String password) throws SQLException {
         SqlDriver db = new SqlDriver();
         ResultSet credentials = db.getUserCredentials(username, password);
@@ -118,6 +156,13 @@ public class LoginController {
         }
     }
 
+    /**
+     * Handles verifying login credentials
+     *
+     * @param user given user id
+     * @param reason login result
+     * @exception IOException IO error
+     */
     public void writeLoginAttemptToFile(String user, String reason) {
         try {
             String data = "User ID: " + user + " | " + "Timestamp: " +  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())

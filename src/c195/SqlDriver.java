@@ -13,10 +13,21 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * SqlDriver handles all database events for the entire application.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class SqlDriver {
 
     private Connection db;
 
+    /**
+     * SqlDriver constructor
+     */
     public SqlDriver() {
         try {
             db = DriverManager.getConnection("jdbc:mysql://wgudb.ucertify.com:3306/WJ07wiZ","U07wiZ", "53689153276");
@@ -25,6 +36,14 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Handles verifying login credentials
+     *
+     * @param username given username
+     * @param password given password
+     * @return ResultSet user crendentials
+     * @exception SQLException db error
+     */
     public ResultSet getUserCredentials(String username, String password) {
         Statement loginStatement = null;
         ResultSet credentials = null;
@@ -38,6 +57,13 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Creates a new appointment.
+     *
+     * @param appointment new appointment data
+     * @return int new appointment id
+     * @exception SQLException db error
+     */
     public int createAppointment(Appointment appointment) {
         Statement createApptStatement = null;
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -58,6 +84,12 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Gets a list of customer names.
+     *
+     * @return ObservableList list of customer data.
+     * @exception SQLException db error
+     */
     public ObservableList<String[]> getCustomerNames() throws SQLException {
         Statement customerQuery = null;
         ResultSet results = null;
@@ -71,6 +103,16 @@ public class SqlDriver {
         return names;
     }
 
+    /**
+     * Handles verifying a valid appt time.
+     *
+     * @param customerId Customer ID
+     * @param start appointment start time
+     * @param finish appointment end time
+     * @param apptId appointment ID
+     * @return Boolean true if valid appt time.
+     * @exception SQLException db error
+     */
     public Boolean checkValidApptTime(String customerId, ZonedDateTime start, ZonedDateTime finish, String apptId) throws SQLException {
         String st = start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String ft = finish.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -88,6 +130,12 @@ public class SqlDriver {
         return true;
     }
 
+    /**
+     * Returns a list of contacts
+     *
+     * @return ObservableList list of contacts.
+     * @exception SQLException db error
+     */
     public ObservableList<String[]> getContacts() throws SQLException {
         Statement contactQuery = null;
         ResultSet results = null;
@@ -101,6 +149,13 @@ public class SqlDriver {
         return contacts;
     }
 
+    /**
+     * Returns user by user id.
+     *
+     * @param userId given user ID
+     * @return String[] user info
+     * @exception SQLException db error
+     */
     public String[] getUser(String userId) throws SQLException {
         Statement userQuery = null;
         ResultSet results = null;
@@ -113,6 +168,12 @@ public class SqlDriver {
         return new String[] {"","",""};
     }
 
+    /**
+     * Returns appt data for appts TableView
+     *
+     * @return List table data
+     * @exception SQLException db error
+     */
     public List<String[]> getApptsForTable() throws SQLException {
         List<String[]> appts = new ArrayList<String[]>();
         Statement apptsQuery = null;
@@ -128,6 +189,13 @@ public class SqlDriver {
         return appts;
     }
 
+    /**
+     * Returns contact name by given contact id
+     *
+     * @param id contact id
+     * @return String contact name
+     * @exception SQLException db error
+     */
     public String getContactNameById(String id) throws SQLException {
         Statement nameQuery = null;
         ResultSet results = null;
@@ -139,6 +207,13 @@ public class SqlDriver {
         return "";
     }
 
+    /**
+     * Returns customer name by customer id
+     *
+     * @param id given customer id
+     * @return String Customer name
+     * @exception SQLException db error
+     */
     public String getCustomerNameById(String id) throws SQLException {
         Statement nameQuery = null;
         ResultSet results = null;
@@ -150,6 +225,13 @@ public class SqlDriver {
         return "";
     }
 
+    /**
+     * Returns appointment information by appointment id
+     *
+     * @param id appointment id
+     * @return Map dictionary of appt data.
+     * @exception SQLException db error
+     */
     public Map<String, String> getApptById(String id) throws SQLException {
         Statement apptQuery = null;
         ResultSet results = null;
@@ -172,6 +254,13 @@ public class SqlDriver {
         return null;
     }
 
+    /**
+     * Returns customer data by customer ID
+     *
+     * @param id given id
+     * @return Map customer data
+     * @exception SQLException db error
+     */
     public Map<String, String> getCustomerById(String id) throws SQLException {
         Statement custQuery = null;
         ResultSet results = null;
@@ -190,6 +279,14 @@ public class SqlDriver {
         return null;
     }
 
+    /**
+     * Updates an appointment by appointment ID
+     *
+     * @param appointment new appt data
+     * @param apptId appointment ID
+     * @return boolean true if successfully updated.
+     * @exception SQLException db error
+     */
     public boolean updateAppointment(Appointment appointment, String apptId) {
         Statement updateApptStatement = null;
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -210,6 +307,13 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Deletes an appointment by appointment ID
+     *
+     * @param id appointment ID
+     * @return boolean true if successfully deleted.
+     * @exception SQLException db error
+     */
     public boolean deleteApptById(String id) {
         Statement deleteStatement = null;
         int deleted;
@@ -224,6 +328,12 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Returns list of countries from database.
+     *
+     * @return ObservableList of countries.
+     * @exception SQLException db error
+     */
     public ObservableList<String[]> getCountries() throws SQLException {
         Statement countryQuery = null;
         ResultSet results = null;
@@ -237,6 +347,13 @@ public class SqlDriver {
         return countries;
     }
 
+    /**
+     * Returns list of states/provinces depending on country ID
+     *
+     * @param countryId country ID
+     * @return ObservableList of states/provinces
+     * @exception SQLException db error
+     */
     public ObservableList<String[]> getStatesProvinces(String countryId) throws SQLException {
         Statement stateQuery = null;
         ResultSet results = null;
@@ -250,6 +367,13 @@ public class SqlDriver {
         return divisions;
     }
 
+    /**
+     * Creates a customer entry in the db
+     *
+     * @param customer Customer data
+     * @return int customer id of new customer
+     * @exception SQLException db error
+     */
     public int createCustomer(Customer customer) {
         Statement createCustomerStatement = null;
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -269,6 +393,12 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Returns list of customers for customer tableview
+     *
+     * @return List of customers for table.
+     * @exception SQLException db error
+     */
     public List<String[]> getCustomersForTable() throws SQLException {
         List<String[]> customers = new ArrayList<String[]>();
         Statement customersQuery = null;
@@ -293,6 +423,14 @@ public class SqlDriver {
         return customers;
     }
 
+    /**
+     * Updates a customer by customer id
+     *
+     * @param customer updated customer data
+     * @param customerId customer ID
+     * @return boolean true if successfully created.
+     * @exception SQLException db error
+     */
     public Boolean updateCustomer(Customer customer, String customerId) {
         Statement updateCustomerStatement = null;
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -311,6 +449,13 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Deletes a customer by customer ID
+     *
+     * @param id given customer id
+     * @return boolean true if successfully deleted.
+     * @exception SQLException db error
+     */
     public boolean deleteCustomerById(String id) {
         Statement deleteStatement = null;
         int deleted;
@@ -329,6 +474,14 @@ public class SqlDriver {
         }
     }
 
+    /**
+     * Returns a list of appointments for the week view on the main UI
+     *
+     * @param f first day of week
+     * @param l last day of week
+     * @return Map the week's appt data.
+     * @exception SQLException db error
+     */
     public Map<Integer, List<String[]>> getApptsByWeek(LocalDate f, LocalDate l) throws SQLException {
         List<String[]> appointments = new ArrayList<String[]>();
         Map<Integer, List<String[]>> data = new HashMap<Integer, List<String[]>>();
@@ -367,10 +520,18 @@ public class SqlDriver {
             }
             k += 1;
         }
-
         return data;
     }
 
+
+    /**
+     * Handles verifying login credentials
+     *
+     * @param username given username
+     * @param password given password
+     * @return boolean true if credentials are accepted.
+     * @exception SQLException db error
+     */
     public Map<Integer, List<String[]>> getApptsByMonth(LocalDate f, LocalDate l, int lengthOfMonth) throws SQLException {
         List<String[]> appointments = new ArrayList<String[]>();
         Map<Integer, List<String[]>> data = new HashMap<Integer, List<String[]>>();
@@ -411,6 +572,137 @@ public class SqlDriver {
         }
 
         return data;
+    }
+
+    /**
+     * Gets list of appts within 15 minutes of login
+     *
+     * @param now timestamp of now
+     * @param inFifteen timestamp of in 15 minutes
+     * @return List any appts within 15 minutes
+     * @exception SQLException db error
+     */
+    public List<String[]> getApptsWithin15Minutes(String now, String inFifteen) throws SQLException {
+        List<String[]> appts = new ArrayList<String[]>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select * from appointments where start between '" + now + "' and '" + inFifteen + "' order by start asc;";
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        while (results.next()) {
+            appts.add(i, new String[]{results.getString("appointment_id"), results.getString("start"), results.getString("end")});
+            System.out.println(appts.get(i));
+            i += 1;
+        }
+
+        return appts;
+    }
+
+    /**
+     * Returns customer appointment report data
+     *
+     * @return List customer report data
+     * @exception SQLException db error
+     */
+    public List<String> getCustomerApptReport() throws SQLException {
+        List<String> appts = new ArrayList<String>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select count(*) as count, month(start) as month from appointments group by month";
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        while (results.next()) {
+            appts.add(i, "Appt. Month: " + results.getString("month") + " | Number of Appts: " + results.getString("count"));
+            i += 1;
+        }
+        appts.add(i, "");
+        i += 1;
+        apptsQuery = null;
+        results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query2 = "select count(*) as count, type from appointments group by type";
+        results = apptsQuery.executeQuery(query2);
+        while (results.next()) {
+            appts.add(i, "Appt. Type: " + results.getString("type") + " | Number of Appts: " + results.getString("count"));
+            i += 1;
+        }
+        return appts;
+    }
+
+    /**
+     * Returns contact schedule report
+     *
+     * @return List contact schedule report data
+     * @exception SQLException db error
+     */
+    public List<String> getContactScheduleReport() throws SQLException {
+        //•  a schedule for each contact in your organization that includes appointment ID, title,
+        // type and description, start date and time, end date and time, and customer ID
+        List<String> appts = new ArrayList<String>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select appointments.appointment_id as id, appointments.title as title, appointments.type as type," +
+                " appointments.description as description, appointments.start as start, appointments.end as end, appointments.customer_id" +
+                " as customer_id, appointments.contact_id as contact_id, contacts.contact_name as contact_name from appointments " +
+                "inner join contacts on appointments.contact_id = contacts.contact_id order by contact_id, start asc;";
+        System.out.println(query);
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        String currentContact = "";
+        while (results.next()) {
+            if (!currentContact.equals(results.getString("contact_name"))) {
+                currentContact = results.getString("contact_name");
+                appts.add(i, "");
+                i += 1;
+                appts.add(i, "Contact Name: " + results.getString("contact_name") + " | Contact ID: " + results.getString("contact_id"));
+                i += 1;
+                appts.add(i, "");
+            }
+            appts.add(i, "Appt. ID: " + results.getString("id") + " | Title: " + results.getString("title") + " | Type: " +
+                    results.getString("type") + " | Desc.: " + results.getString("description") + " | Start: " + results.getString("start") +
+                    " | End: " + results.getString("end") + " | Customer ID: " + results.getString("customer_id"));
+            i += 1;
+        }
+        return appts;
+    }
+
+    /**
+     * Returns customer schedule report data.
+     *
+     * @return List customer schedule report data.
+     * @exception SQLException db error
+     */
+    public List<String> getCustomerScheduleReport() throws SQLException {
+        List<String> appts = new ArrayList<String>();
+        Statement apptsQuery = null;
+        ResultSet results = null;
+        apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        String query = "select appointments.appointment_id as id, appointments.title as title, appointments.type as type," +
+                " appointments.description as description, appointments.start as start, appointments.end as end, appointments.customer_id" +
+                " as customer_id, appointments.contact_id as contact_id, customers.customer_name as customer_name from appointments " +
+                "inner join customers on appointments.customer_id = customers.customer_id order by customer_id, start asc;";
+        System.out.println(query);
+        results = apptsQuery.executeQuery(query);
+        int i = 0;
+        String currentCustomer = "";
+        while (results.next()) {
+            if (!currentCustomer.equals(results.getString("customer_name"))) {
+                currentCustomer = results.getString("customer_name");
+                appts.add(i, "");
+                i += 1;
+                appts.add(i, "Customer Name: " + results.getString("customer_name") + " | Customer ID: " + results.getString("customer_id"));
+                i += 1;
+                appts.add(i, "");
+            }
+            appts.add(i, "Appt. ID: " + results.getString("id") + " | Title: " + results.getString("title") + " | Type: " +
+                    results.getString("type") + " | Desc.: " + results.getString("description") + " | Start: " + results.getString("start") +
+                    " | End: " + results.getString("end") + " | Contact ID: " + results.getString("contact_id"));
+            i += 1;
+        }
+        return appts;
     }
 }
 

@@ -20,6 +20,14 @@ import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * AppointmentController handles all events for the appointment UI.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class AppointmentController {
 
     @FXML public AnchorPane ap;
@@ -50,7 +58,11 @@ public class AppointmentController {
 
     private ObservableList<String[]> names;
 
-
+    /**
+     * Initializes the appt UI
+     *
+     * @exception Exception general exception
+     */
     @FXML
     public void initialize() throws Exception {
         populateDateTimeFields();
@@ -58,6 +70,11 @@ public class AppointmentController {
         populateContactSelect();
     }
 
+    /**
+     * Populates the contact select UI with list from database.
+     *
+     * @exception SQLException db error
+     */
     private void populateContactSelect() throws SQLException {
         SqlDriver db = new SqlDriver();
         ObservableList<String[]> n = db.getContacts();
@@ -69,6 +86,11 @@ public class AppointmentController {
 
     }
 
+    /**
+     * Populates the customer select with list from db.
+     *
+     * @exception SQLException db error
+     */
     private void populateCustomerSelect() throws SQLException {
         SqlDriver db = new SqlDriver();
         ObservableList<String[]> n = db.getCustomerNames();
@@ -80,6 +102,10 @@ public class AppointmentController {
         apptCustomerSelect.setItems(l);
     }
 
+    /**
+     * Populates the appt start and finish time select elements.
+     *
+     */
     private void populateDateTimeFields() {
         apptDateField.setDayCellFactory(dp -> new DateCell() {
             @Override
@@ -102,22 +128,27 @@ public class AppointmentController {
 
         ObservableList<Object> startItems = FXCollections.observableArrayList();
         ObservableList<Object> finishItems = FXCollections.observableArrayList();
-        for (int i=0;i<20;i++) {
+        for (int i=0;i<57;i++) {
             String str = estdate.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST (" + localdate.format(DateTimeFormatter.ofPattern("hh:mm a z")) + ")";
 
-            if (i != 19) {
+            if (i != 56) {
                 startItems.add(str);
             }
             if (i != 0) {
                 finishItems.add(str);
             }
-            estdate = estdate.plusMinutes(30);
-            localdate = localdate.plusMinutes(30);
+            estdate = estdate.plusMinutes(15);
+            localdate = localdate.plusMinutes(15);
         }
         apptStartTimeSelect.setItems(startItems);
         apptFinishTimeSelect.setItems(finishItems);
     }
 
+    /**
+     * Handles creating a new appointment.
+     *
+     * @exception IOException io error
+     */
     private void createNewAppt() throws IOException {
         String apptTitle = apptTitleField.getText();
         String apptDesc = apptDescField.getText();
@@ -151,6 +182,11 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Returns back to the main UI.
+     *
+     * @exception IOException io error
+     */
     private void loadHomeScreen() throws IOException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("main.fxml")));
         root = loader.load();
@@ -163,6 +199,12 @@ public class AppointmentController {
         stage.show();
     }
 
+    /**
+     * Updates an appointment by appt id.
+     *
+     * @param apptId appt ID
+     * @exception IOException io error
+     */
     private void updateAppt(String apptId) throws IOException {
         String apptTitle = apptTitleField.getText();
         String apptDesc = apptDescField.getText();
@@ -196,6 +238,12 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Handles when a user clicks the 'OK' button
+     *
+     * @param actionEvent click event
+     * @exception IOException io error
+     */
     public void handleApptOk(ActionEvent actionEvent) throws IOException {
 
         if (hiddenApptLabel.getText() == "") {
@@ -205,6 +253,23 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Performs validation tests on the new appointment inputs.
+     *
+     * @param apptTitle
+     * @param apptDesc
+     * @param apptContact
+     * @param apptLocation
+     * @param apptType
+     * @param date
+     * @param apptStartTime
+     * @param apptFinishTime
+     * @param apptCustomer
+     * @param userId
+     * @param updatingAppt
+     * @param apptId
+     * @return Boolean true if validated
+     */
     private Boolean validateInput(String apptTitle, String apptDesc, String apptContact, String apptLocation, String apptType,
                                   String date,  String apptStartTime, String apptFinishTime,
                                   String apptCustomer, String userId, Boolean updatingAppt, String apptId) {
@@ -241,11 +306,27 @@ public class AppointmentController {
         return false;
     }
 
+    /**
+     * Verifies there is no customer appt overlap.
+     *
+     * @param apptCustomer
+     * @param startTime
+     * @param finishTime
+     * @param apptId
+     * @return Boolean true if no overlap
+     * @exception SQLException db error
+     */
     private boolean checkForApptOverlap(String apptCustomer, ZonedDateTime startTime, ZonedDateTime finishTime, String apptId) throws SQLException {
         SqlDriver db = new SqlDriver();
         return db.checkValidApptTime(apptCustomer, startTime, finishTime, apptId);
     }
 
+    /**
+     * Goes back to home screen when user clicks 'Cancel' button
+     *
+     * @param actionEvent click event
+     * @exception IOException io error
+     */
     public void handleApptCancel(ActionEvent actionEvent) throws IOException {
         loadHomeScreen();
     }
@@ -258,6 +339,11 @@ public class AppointmentController {
         this.names = names;
     }
 
+    /**
+     * Sets the customer value when updating an appt.
+     *
+     * @param customer customer name
+     */
     public void setCustomerValue(String customer) {
         ObservableList items = apptCustomerSelect.getItems();
         Boolean done = false;
@@ -273,6 +359,11 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Sets the contact value when updating an appt.
+     *
+     * @param contact contact name
+     */
     public void setContactValue(String contact) {
 
         ObservableList items = apptContactSelect.getItems();
@@ -289,6 +380,12 @@ public class AppointmentController {
         }
     }
 
+    /**
+     * Sets the start and finish time fields when updating a customer.
+     *
+     * @param s start time
+     * @param f finish time
+     */
     public void setStartAndFinish(String s, String f) {
         DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
         ZonedDateTime st = ZonedDateTime.parse(s + " UTC", frmt).withZoneSameInstant(ZoneId.of("America/New_York"));

@@ -21,6 +21,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * CustomerController handles all events for the customer UI.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class CustomerController {
 
     @FXML public AnchorPane ap;
@@ -44,11 +52,21 @@ public class CustomerController {
     Parent root;
     Stage stage;
 
+    /**
+     * Initializes Customer UI.
+     *
+     * @exception Exception
+     */
     @FXML
     public void initialize() throws Exception {
         populateCountrySelect();
     }
 
+    /**
+     * Sets the country value if updating a customer.
+     *
+     * @param country given country
+     */
     public void setCountryValue(String country) {
         ObservableList items = custCountrySelect.getItems();
         Boolean done = false;
@@ -64,6 +82,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * sets the state value if updating a customer.
+     *
+     * @param state given state
+     */
     public void setStateValue(String state) {
         ObservableList items = custStateSelect.getItems();
         Boolean done = false;
@@ -79,6 +102,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * Populates the country select form item.
+     *
+     * @exception SQLException db error
+     */
     private void populateCountrySelect() throws SQLException {
         SqlDriver db = new SqlDriver();
         ObservableList<String[]> countries = db.getCountries();
@@ -98,6 +126,12 @@ public class CustomerController {
         });
     }
 
+    /**
+     * Populates the state select form UI based on country selected.
+     *
+     * @param selectedCountry given country name
+     * @exception SQLException db error
+     */
     private void populateStateProvinceSelect(String selectedCountry) throws SQLException {
         this.countries.forEach((c) -> {
             if (c[1].equals(selectedCountry)) {
@@ -135,6 +169,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * Handles creating a new customer.
+     *
+     * @exception SQLException db error
+     */
     private void createNewCustomer() throws IOException {
         String custName = custNameField.getText();
         String custAddr = custAddressField.getText();
@@ -162,6 +201,12 @@ public class CustomerController {
         }
     }
 
+    /**
+     * Updates a customer.
+     *
+     * @param customerId customer ID to be updated.
+     * @exception IOException db error
+     */
     private void updateCustomer(String customerId) throws IOException {
         String custName = custNameField.getText();
         String custAddr = custAddressField.getText();
@@ -189,6 +234,11 @@ public class CustomerController {
         }
     }
 
+    /**
+     * Returns back to the main UI.
+     *
+     * @exception IOException IO error
+     */
     private void loadHomeScreen() throws IOException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("main.fxml")));
         root = loader.load();
@@ -205,6 +255,18 @@ public class CustomerController {
         return divisions;
     }
 
+    /**
+     * Validates all form items are filled out.
+     *
+     * @param custName
+     * @param custAddr
+     * @param custZip
+     * @param custPhone
+     * @param custCountry
+     * @param custState
+     * @param customer_id
+     * @return boolean true if items are validated.
+     */
     private Boolean validateInput(String custName, String custAddr, String custZip, String custPhone,
                                   String custCountry, String custState, String customer_id) {
 
@@ -218,16 +280,34 @@ public class CustomerController {
         }
     }
 
+    /**
+     * Returns back to home screen after customer hits cancel btn
+     *
+     * @param actionEvent click event
+     * @exception IOException IO error
+     */
     public void handleCustomerCancel(ActionEvent actionEvent) throws IOException {
         loadHomeScreen();
     }
 
-
+    /**
+     * Sets the hidden label username and user id
+     *
+     * @param id given user id
+     * @param user given username
+     */
     public void setUser(String id, String user) {
         hiddenUsernameLabel.setText(user);
         hiddenUserIdLabel.setText(id);
     }
 
+    /**
+     * Gets the country and province name selected in the form.
+     *
+     * @param division_id state/province ID
+     * @return String[] state and province name
+     * @exception SQLException db error
+     */
     public String[] getCountryAndProvince(String division_id) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<String, String[]> cd = new HashMap<String, String[]>();

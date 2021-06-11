@@ -9,6 +9,14 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+/**
+ * Appointment model for all appointment functionality.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class Appointment {
 
     private String appointmentId;
@@ -31,6 +39,21 @@ public class Appointment {
     private ZonedDateTime startUTC;
     private ZonedDateTime finishUTC;
 
+    /**
+     * Appointment constructor
+     *
+     * @param title
+     * @param description
+     * @param type
+     * @param contactId
+     * @param location
+     * @param startDate
+     * @param startTime
+     * @param finishDate
+     * @param finishTime
+     * @param customerId
+     * @param userId
+     */
     public Appointment(String title, String description, String type, String contactId, String location, String startDate, String startTime,
                        String finishDate, String finishTime, String customerId, String userId){
         setCustomerId(customerId);
@@ -45,6 +68,15 @@ public class Appointment {
         setAppointmentEnd(finishDate, finishTime);
     }
 
+    /**
+     * Appointment constructor
+     *
+     * @param id
+     * @param title
+     * @param start
+     * @param end
+     * @param contact
+     */
     public Appointment(String id, String title, String start, String end, String contact) {
         setAppointmentId(id);
         setTitle(title);
@@ -163,6 +195,11 @@ public class Appointment {
         this.finishUTC = estdate.withZoneSameInstant(ZoneId.of("+0"));
     }
 
+    /**
+     * Pushes appt to database
+     *
+     * @return Boolean true if successful
+     */
     public boolean pushToDatabase() {
         SqlDriver db = new SqlDriver();
         int appointmentId = db.createAppointment(this);
@@ -172,6 +209,12 @@ public class Appointment {
         return false;
     }
 
+    /**
+     * Updates appt by id
+     *
+     * @param apptId appt id
+     * @return Boolean true if successful
+     */
     public boolean updateApptById(String apptId) {
         SqlDriver db = new SqlDriver();
         return db.updateAppointment(this, apptId);

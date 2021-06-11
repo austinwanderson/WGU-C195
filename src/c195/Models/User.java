@@ -1,9 +1,15 @@
 package c195.Models;
-
 import c195.SqlDriver;
-
 import java.sql.SQLException;
 
+/**
+ * User model for handling user login.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class User {
 
     private String userId;

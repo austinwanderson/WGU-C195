@@ -17,14 +17,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
+/**
+ * MainController handles all events for the main scheduler UI.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class MainController {
 
     @FXML public AnchorPane ap;
@@ -48,8 +61,12 @@ public class MainController {
     @FXML public Button createApptBtn;
     @FXML public Button updateApptBtn;
     @FXML public Button deleteApptBtn;
+    @FXML public Button customerApptReportBtn;
+    @FXML public Button contactScheduleReportBtn;
+    @FXML public Button customerScheduleReportBtn;
     @FXML public TableView apptTable;
     @FXML public TableView customerTable;
+    @FXML public TextArea reportsTextField;
     @FXML public Label monthYearLabel;
     @FXML public Button nextMonthBtn;
     @FXML public Button previousMonthBtn;
@@ -60,6 +77,7 @@ public class MainController {
     @FXML public Label hiddenUserIdLabel;
     @FXML public Label noApptsLabelWeek;
     @FXML public Label noApptsLabelMonth;
+    @FXML public Label noApptsIn15Label;
 
     public static Node[][] calendarNodes;
     public static Node[] weekDayNodes;
@@ -87,6 +105,10 @@ public class MainController {
     Appointment selectedAppt;
     Customer selectedCustomer;
 
+    /**
+     * Called when the MainController is initialized.  Sets up
+     * the UI.
+     */
     @FXML
     public void initialize() throws Exception {
         weekInitialized = false;
@@ -98,6 +120,39 @@ public class MainController {
         initWeek();
     }
 
+    /**
+     * Determines whether any appointments occur within 15 minutes of
+     * login and shows an Alert if so.
+     *
+     * @exception SQLException db error
+     */
+    public void getApptsWithinFifteenMinutes() throws SQLException {
+        SqlDriver db = new SqlDriver();
+        DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss");
+        DateTimeFormatter frmt_z = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+        DateTimeFormatter frmt_a = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+        String inFifteen = ZonedDateTime.now().plusMinutes(15).withZoneSameInstant(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String now = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        System.out.println(inFifteen);
+        System.out.println(now);
+        List<String[]> appts = db.getApptsWithin15Minutes(now, inFifteen);
+        if (appts.size() > 0) {
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setContentText("Appointment ID " + appts.get(0)[0] + " starts within 15 minutes at " +
+                    ZonedDateTime.parse(appts.get(0)[1] + " UTC", frmt_z).withZoneSameInstant(ZoneId.systemDefault()).format(frmt_a));
+            ((Stage) a.getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
+            a.show();
+            noApptsIn15Label.setOpacity(0);
+        } else {
+            noApptsIn15Label.setOpacity(1);
+        }
+    }
+
+    /**
+     * Handles UI initialization
+     *
+     * @exception SQLException db error
+     */
     public void initializeUI() throws SQLException {
         today = LocalDate.now();
         currentMonth = today.getMonthValue();
@@ -109,6 +164,9 @@ public class MainController {
         initTabs();
     }
 
+    /**
+     * Initializes the Week UI of the main view.
+     */
     private void initWeek() {
         weekInitialized = true;
         buildWeek();
@@ -120,6 +178,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Initializes the Month UI of the main view.
+     */
     private void initMonth() {
         monthInitialized = true;
         buildCalendar();
@@ -131,6 +192,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Initializes the tabs on the main view and calls functions
+     * to initialize each tab's view.  Lambda expression used to
+     * loop through tabs elements more efficiently passing the tab
+     * object.
+     */
     private void initTabs() {
         ObservableList<Tab> tabs = mainTabs.getTabs();
         tabs.forEach((tab) -> {
@@ -160,6 +227,13 @@ public class MainController {
         });
     }
 
+    /**
+     * Handles updating the calendar with the month's appointments.
+     *
+     * @param f first day of month
+     * @param l last day of month
+     * @exception SQLException db error
+     */
     private void fillMonthCalendar(LocalDate f, LocalDate l) throws SQLException {
         SqlDriver db = new SqlDriver();
         int daysInMonth = getDaysInMonth(f.getYear(), f.getMonthValue());
@@ -180,6 +254,13 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles updating the week UI with the week's appointments.
+     *
+     * @param f first day of week
+     * @param l last day of week
+     * @exception SQLException db error
+     */
     private void fillWeekCalendar(LocalDate f, LocalDate l) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<Integer, List<String[]>> data = db.getApptsByWeek(f,l);
@@ -199,6 +280,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Clears the week UI.
+     */
     private void clearWeekAppts() {
         for (int i=0;i<weekApptNodes.length;i++) {
             Pane dayPane = (Pane) weekApptNodes[i];
@@ -207,6 +291,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Clears the calendar UI.
+     */
     private void clearMonthAppts() {
         for (int i=1;i<=monthNodes.size();i++) {
             VBox dayList = (VBox) monthNodes.get(i);
@@ -214,6 +301,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Updates the customers TableView.
+     *
+     * @exception SQLException db error
+     */
     private void updateCustomersTable() throws SQLException {
         SqlDriver db = new SqlDriver();
         List<String[]> customers = db.getCustomersForTable();
@@ -244,6 +336,9 @@ public class MainController {
 
     }
 
+    /**
+     * Handles selecting a customer and enables the update and delete customer buttons.
+     */
     private void customerSelect() {
         if (customerTable.getSelectionModel().getSelectedItem() != null) {
             selectedCustomer = (Customer) customerTable.getSelectionModel().getSelectedItem();
@@ -252,6 +347,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Updates the Appointments TableView. Lambda expression used to loop
+     * through list of appts and add them to table more efficiently.
+     *
+     * @exception SQLException db error
+     */
     private void updateApptsTable() throws SQLException {
         SqlDriver db = new SqlDriver();
         List<String[]> appts = db.getApptsForTable();
@@ -289,6 +390,9 @@ public class MainController {
         });
     }
 
+    /**
+     * Handles selecting an appointment and enables the update and delete appointment buttons.
+     */
     public void apptSelect() {
         if (apptTable.getSelectionModel().getSelectedItem() != null) {
             selectedAppt = (Appointment) apptTable.getSelectionModel().getSelectedItem();
@@ -297,6 +401,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles creating the calendar view.
+     */
     private void buildCalendar() {
         calendarNodes = new Node[calendarWidth][calendarHeight];
         for (Node child : calendarGrid.getChildren()) {
@@ -336,6 +443,9 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles creating the week view.
+     */
     private void buildWeek() {
         weekDayNodes = new Node[calendarWidth];
         weekApptNodes = new Node[calendarWidth];
@@ -376,6 +486,12 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles updating the accordion list of the selected day of month.
+     *
+     * @param list javafx accordion component
+     * @param index pane selected in month view
+     */
     private void fillDayAppointmentsMonth(Accordion list, int index) {
         list.getPanes().clear();
         List<String[]> appts = monthData.get(index-1);
@@ -384,6 +500,11 @@ public class MainController {
             list.setOpacity(0);
         } else {
             for (String[] appt : appts) {
+                DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+                ZonedDateTime st = ZonedDateTime.parse(appt[0] + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+                ZonedDateTime fn = ZonedDateTime.parse(appt[6] + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+                String start = st.format(DateTimeFormatter.ofPattern("hh:mm a z"));
+                String finish = fn.format(DateTimeFormatter.ofPattern("hh:mm a z"));
                 GridPane grid = new GridPane();
                 grid.setVgap(4);
                 grid.setPadding(new Insets(5, 5, 5, 5));
@@ -391,8 +512,8 @@ public class MainController {
                 grid.add(new Label("Description:  " + appt[3]), 0, 1);
                 grid.add(new Label("Location:  " + appt[4]), 0, 2);
                 grid.add(new Label("Type:  " + appt[5]), 0, 3);
-                grid.add(new Label("Start:  " + appt[0]), 0, 4);
-                grid.add(new Label("End:  " + appt[6]), 0, 5);
+                grid.add(new Label("Start:  " + start), 0, 4);
+                grid.add(new Label("End:  " + finish), 0, 5);
                 grid.add(new Label("Customer:  " + appt[7]), 0, 6);
                 grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
                 grid.add(new Label("Contact:  " + appt[8]), 0, 8);
@@ -405,7 +526,12 @@ public class MainController {
             list.setOpacity(1);
         }
     }
-
+    /**
+     * Handles updating the accordion list of appointments of the selected day of week.
+     *
+     * @param list javafx accordion component
+     * @param index pane selected in week view
+     */
     private void fillDayAppointmentsWeek(Accordion list, int index) {
         list.getPanes().clear();
         List<String[]> appts = weekData.get(index);
@@ -414,6 +540,11 @@ public class MainController {
             list.setOpacity(0);
         } else {
             for (String[] appt : appts) {
+                DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+                ZonedDateTime st = ZonedDateTime.parse(appt[0] + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+                ZonedDateTime fn = ZonedDateTime.parse(appt[6] + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+                String start = st.format(DateTimeFormatter.ofPattern("hh:mm a z"));
+                String finish = fn.format(DateTimeFormatter.ofPattern("hh:mm a z"));
                 GridPane grid = new GridPane();
                 grid.setVgap(4);
                 grid.setPadding(new Insets(5, 5, 5, 5));
@@ -421,8 +552,8 @@ public class MainController {
                 grid.add(new Label("Description:  " + appt[3]), 0, 1);
                 grid.add(new Label("Location:  " + appt[4]), 0, 2);
                 grid.add(new Label("Type:  " + appt[5]), 0, 3);
-                grid.add(new Label("Start:  " + appt[0]), 0, 4);
-                grid.add(new Label("End:  " + appt[6]), 0, 5);
+                grid.add(new Label("Start:  " + start), 0, 4);
+                grid.add(new Label("End:  " + finish), 0, 5);
                 grid.add(new Label("Customer:  " + appt[7]), 0, 6);
                 grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
                 grid.add(new Label("Contact:  " + appt[8]), 0, 8);
@@ -436,6 +567,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles updating the dates on the week view UI
+     *
+     * @param day current day of week
+     */
     private void updateWeekDates(LocalDate day) {
         int dayOfWeek = day.getDayOfWeek().getValue();
         LocalDate monday = day.minusDays(dayOfWeek-1);
@@ -473,6 +609,11 @@ public class MainController {
                 28 + (year % 4 == 0 ? 1 : 0) - (year % 100 == 0 ? 1 : 0) + (year % 400 == 0 ? 1 : 0);
     }
 
+    /**
+     * Handles updating the month dates on the calendar view UI.
+     *
+     * @param LocalDate firstOfMonth - first day of month
+     */
     public void updateCalendarDates(LocalDate firstOfMonth) {
         Map<Integer, VBox> mn = new HashMap<Integer, VBox>();
         int dayCount = 1;
@@ -506,6 +647,11 @@ public class MainController {
         monthYearLabel.setText(monthName + " " + currentYear);
     }
 
+    /**
+     * Handles opening the Create Customer UI.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleAddNewCustomer(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("customer.fxml")));
         root = loader.load();
@@ -518,6 +664,13 @@ public class MainController {
         stage.show();
     }
 
+    /**
+     * Handles opening the Update Customer UI.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     * @exception IOException
+     */
     public void handleUpdateCustomer(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("customer.fxml")));
         root = loader.load();
@@ -542,6 +695,12 @@ public class MainController {
         stage.show();
     }
 
+    /**
+     * Handles selecting a customer and enables the update and delete customer buttons.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     */
     public void handleDeleteCustomer(ActionEvent actionEvent) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<String, String> editingAppt = db.getCustomerById(selectedCustomer.getId());
@@ -549,9 +708,18 @@ public class MainController {
         if (deleted) {
             updateCustomersTable();
             updateApptsTable();
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setContentText("Customer successfully deleted.");
+            ((Stage) a.getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
+            a.show();
         }
     }
 
+    /**
+     * Handles opening the Create Appointment UI.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleCreateNewAppt(ActionEvent actionEvent) throws IOException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         root = loader.load();
@@ -564,6 +732,13 @@ public class MainController {
         stage.show();
     }
 
+    /**
+     * Handles opening the Update Appointment UI.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     * @exception IOException
+     */
     public void handleUpdateAppt(ActionEvent actionEvent) throws IOException, SQLException {
         FXMLLoader loader = new FXMLLoader((getClass().getResource("appointment.fxml")));
         SqlDriver db = new SqlDriver();
@@ -590,6 +765,12 @@ public class MainController {
         stage.show();
     }
 
+    /**
+     * Handles deleting a selected appointment.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     */
     public void handleDeleteAppt(ActionEvent actionEvent) throws SQLException {
         SqlDriver db = new SqlDriver();
         Map<String, String> editingAppt = db.getApptById(selectedAppt.getId());
@@ -599,6 +780,11 @@ public class MainController {
         }
     }
 
+    /**
+     * Handles changing the week view to the following week.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleGoToNextWeek(ActionEvent actionEvent) throws SQLException {
         firstDayOfWeek = lastDayOfWeek.plusDays(2);
         clearWeekAppts();
@@ -606,6 +792,11 @@ public class MainController {
         fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
     }
 
+    /**
+     * Handles changing the week view to the previous week.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleGoToPreviousWeek(ActionEvent actionEvent) throws SQLException {
         lastDayOfWeek = firstDayOfWeek.minusDays(2);
         clearWeekAppts();
@@ -613,6 +804,11 @@ public class MainController {
         fillWeekCalendar(firstDayOfWeek, lastDayOfWeek);
     }
 
+    /**
+     * Handles changing the calendar view to the following month.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleGoToNextMonth(ActionEvent actionEvent) throws SQLException {
         currentMonth += 1;
         firstOfMonth = firstOfMonth.plusMonths(1);
@@ -627,6 +823,11 @@ public class MainController {
         fillMonthCalendar(firstOfMonth,lastOfMonth);
     }
 
+    /**
+     * Handles changing the calendar view to the previous month.
+     *
+     * @param ActionEvent actionEvent
+     */
     public void handleGoToPreviousMonth(ActionEvent actionEvent) throws SQLException {
         currentMonth -= 1;
         firstOfMonth = firstOfMonth.minusMonths(1);
@@ -641,9 +842,72 @@ public class MainController {
         fillMonthCalendar(firstOfMonth,lastOfMonth);
     }
 
+    /**
+     * Sets the logged in user variables as hidden labels.
+     */
     public void setUser(String id, String user) {
         hiddenUserIdLabel.setText(id);
         hiddenUsernameLabel.setText(user);
+    }
+
+    /**
+     * Handles creating the customer appointment report.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     */
+    public void getCustomerApptReport(ActionEvent actionEvent) throws SQLException {
+        reportsTextField.setOpacity(1);
+        reportsTextField.setText("");
+        reportsTextField.setEditable(false);
+
+        SqlDriver db = new SqlDriver();
+        List<String> values = db.getCustomerApptReport();
+        String text = "";
+        for (String value : values) {
+            text += value + "\n";
+        }
+        reportsTextField.setText(text);
+    }
+
+    /**
+     * Handles creating the contact schedule report.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     */
+    public void getContactScheduleReport(ActionEvent actionEvent) throws SQLException {
+        reportsTextField.setOpacity(1);
+        reportsTextField.setText("");
+        reportsTextField.setEditable(false);
+
+        SqlDriver db = new SqlDriver();
+        List<String> values = db.getContactScheduleReport();
+        String text = "";
+        for (String value : values) {
+            text += value + "\n";
+        }
+        reportsTextField.setText(text);
+    }
+
+    /**
+     * Handles creating the customer schedule report.
+     *
+     * @param ActionEvent actionEvent
+     * @exception SQLException db error
+     */
+    public void getCustomerScheduleBtn(ActionEvent actionEvent) throws SQLException {
+        reportsTextField.setOpacity(1);
+        reportsTextField.setText("");
+        reportsTextField.setEditable(false);
+
+        SqlDriver db = new SqlDriver();
+        List<String> values = db.getCustomerScheduleReport();
+        String text = "";
+        for (String value : values) {
+            text += value + "\n";
+        }
+        reportsTextField.setText(text);
     }
 }
 

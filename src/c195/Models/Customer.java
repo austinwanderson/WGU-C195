@@ -2,6 +2,16 @@ package c195.Models;
 
 import c195.SqlDriver;
 
+import java.sql.SQLException;
+
+/**
+ * Customer model for all customer functionality.
+ *
+ *
+ * @author  Austin Anderson
+ * @version 1.0
+ * @since   2021-06-10
+ */
 public class Customer {
 
     private String customer_id;
@@ -17,6 +27,16 @@ public class Customer {
     public Customer() {
     }
 
+    /**
+     * Customer constructor
+     *
+     * @param custName
+     * @param custAddr
+     * @param custDivisionId
+     * @param custZip
+     * @param custPhone
+     * @param userId
+     */
     public Customer(String custName, String custAddr, String custDivisionId, String custZip, String custPhone, String userId) {
         setName(custName);
         setAddress(custAddr);
@@ -26,6 +46,18 @@ public class Customer {
         setUpdatedBy(userId);
     }
 
+    /**
+     * Customer constructor
+     *
+     * @param custName
+     * @param custAddr
+     * @param custDivisionId
+     * @param custZip
+     * @param phone
+     * @param custId
+     * @param userId
+     * @param forTable
+     */
     public Customer(String custId, String custName, String custAddr, String custPostalCode, String custCountry, String custDivision, String phone, Boolean forTable) {
         setId(custId);
         setName(custName);
@@ -78,6 +110,11 @@ public class Customer {
         this.division_id = division_id;
     }
 
+    /**
+     * Pushes customer to database
+     *
+     * @return Boolean true if successful
+     */
     public Boolean pushToDatabase() {
         SqlDriver db = new SqlDriver();
         int appointmentId = db.createCustomer(this);
@@ -87,6 +124,12 @@ public class Customer {
         return false;
     }
 
+    /**
+     * updates customer by ID
+     *
+     * @param customerId
+     * @return Boolean true if successfully updated.
+     */
     public Boolean updateCustomerById(String customerId) {
         SqlDriver db = new SqlDriver();
         return db.updateCustomer(this, customerId);
