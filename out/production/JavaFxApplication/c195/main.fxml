@@ -605,21 +605,7 @@
                         </Button>
                         <Accordion fx:id="monthAccordionApptList" layoutX="711.0" layoutY="50.0" prefHeight="538.0" prefWidth="242.0">
                           <panes>
-                            <TitledPane animated="false" text="untitled 1">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                              </content>
-                            </TitledPane>
-                            <TitledPane animated="false" text="untitled 2">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                              </content>
-                            </TitledPane>
-                            <TitledPane animated="false" text="untitled 3">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                              </content>
-                            </TitledPane>
+
                           </panes>
                         </Accordion>
                      </children></AnchorPane>

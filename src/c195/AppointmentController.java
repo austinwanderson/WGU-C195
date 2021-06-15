@@ -42,9 +42,9 @@ public class AppointmentController {
     @FXML public TextField apptTypeField;
     @FXML public DatePicker apptDateField;
     @FXML public ChoiceBox apptStartTimeSelect;
-    @FXML public DatePicker apptFinishDateField;
     @FXML public ChoiceBox apptFinishTimeSelect;
     @FXML public ChoiceBox apptCustomerSelect;
+    @FXML public ChoiceBox apptUserSelect;
     @FXML public Button apptOkBtn;
     @FXML public Button apptCancelBtn;
     @FXML public Label hiddenApptLabel;
@@ -68,6 +68,22 @@ public class AppointmentController {
         populateDateTimeFields();
         populateCustomerSelect();
         populateContactSelect();
+        populateUserSelect();
+    }
+
+    /**
+     * Populates the user select UI with list from database.
+     *
+     * @exception SQLException db error
+     */
+    private void populateUserSelect() throws SQLException {
+        SqlDriver db = new SqlDriver();
+        ObservableList<String[]> n = db.getUsers();
+        ObservableList<Object> l = FXCollections.observableArrayList();
+        n.forEach((name) -> {
+            l.add(name[0] + ": " + name[1]);
+        });
+        apptUserSelect.setItems(l);
     }
 
     /**
@@ -83,7 +99,6 @@ public class AppointmentController {
             l.add(name[0] + ": " + name[1] + " (" + name[2] + ")");
         });
         apptContactSelect.setItems(l);
-
     }
 
     /**
@@ -115,19 +130,12 @@ public class AppointmentController {
             }
         });
 
-        apptFinishDateField.setDayCellFactory(dp -> new DateCell() {
-            @Override
-            public void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                setDisable(empty || item.getDayOfWeek() == DayOfWeek.SATURDAY || item.getDayOfWeek() == DayOfWeek.SUNDAY );
-            }
-        });
-
         ZonedDateTime estdate = ZonedDateTime.of(2020,1,1,8,0,0,0,ZoneId.of("America/New_York"));
         ZonedDateTime localdate = estdate.withZoneSameInstant(ZoneOffset.systemDefault());
 
         ObservableList<Object> startItems = FXCollections.observableArrayList();
         ObservableList<Object> finishItems = FXCollections.observableArrayList();
+
         for (int i=0;i<57;i++) {
             String str = estdate.format(DateTimeFormatter.ofPattern("hh:mm a")) + " EST (" + localdate.format(DateTimeFormatter.ofPattern("hh:mm a z")) + ")";
 
@@ -159,7 +167,7 @@ public class AppointmentController {
         String apptStartTime = (apptStartTimeSelect.getValue() != null) ? apptStartTimeSelect.getValue().toString() : "";
         String apptFinishTime = (apptFinishTimeSelect.getValue() != null) ? apptFinishTimeSelect.getValue().toString() : "";
         String apptCustomer = (apptCustomerSelect.getValue() != null) ? apptCustomerSelect.getValue().toString() : "";
-        String userId = hiddenUserIdLabel.getText();
+        String userId = (apptUserSelect.getValue() != null) ? apptUserSelect.getValue().toString().split(":")[0] : "";
 
         final String[] customerId = new String[1];
         getNames().forEach((name) -> {
@@ -215,7 +223,7 @@ public class AppointmentController {
         String apptStartTime = (apptStartTimeSelect.getValue() != null) ? apptStartTimeSelect.getValue().toString() : "";
         String apptFinishTime = (apptFinishTimeSelect.getValue() != null) ? apptFinishTimeSelect.getValue().toString() : "";
         String apptCustomer = (apptCustomerSelect.getValue() != null) ? apptCustomerSelect.getValue().toString() : "";
-        String userId = hiddenUserIdLabel.getText();
+        String userId = (apptUserSelect.getValue() != null) ? apptUserSelect.getValue().toString().split(":")[0] : "";
 
         final String[] customerId = new String[1];
         getNames().forEach((name) -> {
@@ -374,6 +382,27 @@ public class AppointmentController {
             String value = j.next().toString().split(":")[0];
             if (value.equals(contact)) {
                 apptContactSelect.getSelectionModel().select(i);
+                done = true;
+            }
+            i += 1;
+        }
+    }
+
+    /**
+     * Sets the user value when updating an appt.
+     *
+     * @param user user id
+     */
+    public void setUserValue(String user_id) {
+
+        ObservableList items = apptUserSelect.getItems();
+        Boolean done = false;
+        int i = 0;
+        Iterator j = items.iterator();
+        while (j.hasNext() && !done) {
+            String value = j.next().toString().split(":")[0];
+            if (value.equals(user_id)) {
+                apptUserSelect.getSelectionModel().select(i);
                 done = true;
             }
             i += 1;

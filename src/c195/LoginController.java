@@ -45,6 +45,7 @@ public class LoginController {
     @FXML private Label loginZoneLabel;
 
     public static String currentLanguage;
+    public String currentError = "";
 
     Parent root;
     Stage stage;
@@ -82,6 +83,11 @@ public class LoginController {
             loginLanguageLabel.setText(rb.getString("language"));
             loginButton.setText(rb.getString("button"));
             loginMainLabel.setText(rb.getString("header"));
+            if (!currentError.equals("")) {
+                String errorMessage = ResourceBundle.getBundle("c195.Properties.lang",
+                        Locale.forLanguageTag(currentLanguage)).getString(currentError);
+                loginErrorMessage.setText(errorMessage);
+            }
         } catch (MissingResourceException e) {
             e.printStackTrace();
         }
@@ -137,6 +143,7 @@ public class LoginController {
         SqlDriver db = new SqlDriver();
         ResultSet credentials = db.getUserCredentials(username, password);
         if (credentials == null) {
+            currentError = "db_connection_error";
             String errorMessage = ResourceBundle.getBundle("c195.Properties.lang",
                     Locale.forLanguageTag(currentLanguage)).getString("db_connection_error");
             loginErrorMessage.setText(errorMessage);
@@ -144,6 +151,7 @@ public class LoginController {
             writeLoginAttemptToFile(username, errorMessage);
             return false;
         } else if (!credentials.first()) {
+            currentError = "incorrect_credentials";
             String errorMessage = ResourceBundle.getBundle("c195.Properties.lang",
                     Locale.forLanguageTag(currentLanguage)).getString("incorrect_credentials");
             loginErrorMessage.setText(errorMessage);

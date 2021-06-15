@@ -49,13 +49,13 @@ public class Customer {
     /**
      * Customer constructor
      *
+     * @param custId
      * @param custName
      * @param custAddr
-     * @param custDivisionId
-     * @param custZip
+     * @param custPostalCode
+     * @param custCountry
+     * @param custDivision
      * @param phone
-     * @param custId
-     * @param userId
      * @param forTable
      */
     public Customer(String custId, String custName, String custAddr, String custPostalCode, String custCountry, String custDivision, String phone, Boolean forTable) {

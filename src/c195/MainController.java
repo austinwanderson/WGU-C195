@@ -178,8 +178,9 @@ public class MainController {
         }
     }
 
+
     /**
-     * Initializes the Month UI of the main view.
+     * Initializes the month UI of the main view.
      */
     private void initMonth() {
         monthInitialized = true;
@@ -197,6 +198,8 @@ public class MainController {
      * to initialize each tab's view.  Lambda expression used to
      * loop through tabs elements more efficiently passing the tab
      * object.
+     *
+     *
      */
     private void initTabs() {
         ObservableList<Tab> tabs = mainTabs.getTabs();
@@ -239,8 +242,9 @@ public class MainController {
         int daysInMonth = getDaysInMonth(f.getYear(), f.getMonthValue());
         Map<Integer, List<String[]>> data = db.getApptsByMonth(f,l, daysInMonth);
         monthData = data;
-        int i = 0;
-        for (i=1;i<=data.size();i++) {
+        System.out.println(monthData);
+        System.out.println(monthData.size());
+        for (int i=1;i<=data.size();i++) {
             VBox dayList = (VBox) monthNodes.get(i);
             List<String[]> appts = data.get(i-1);
             String numOfAppts = ((appts.size() == 0) ? "" : (appts.size() == 1) ? String.valueOf(appts.size()) +
@@ -518,6 +522,7 @@ public class MainController {
                 grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
                 grid.add(new Label("Contact:  " + appt[8]), 0, 8);
                 grid.add(new Label("Contact ID:  " + appt[11]), 0, 9);
+                grid.add(new Label("Title:  " + appt[2]), 0, 10);
                 //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
                 TitledPane titledPane = new TitledPane(appt[2], grid);
                 list.getPanes().add(titledPane);
@@ -558,6 +563,7 @@ public class MainController {
                 grid.add(new Label("Customer ID:  " + appt[10]), 0, 7);
                 grid.add(new Label("Contact:  " + appt[8]), 0, 8);
                 grid.add(new Label("Contact ID:  " + appt[11]), 0, 9);
+                grid.add(new Label("Title:  " + appt[2]), 0, 10);
                 //Font font = Font.font(Font.getDefault().toString(), FontWeight.NORMAL, FontPosture.REGULAR, 14);
                 TitledPane titledPane = new TitledPane(appt[2], grid);
                 list.getPanes().add(titledPane);
@@ -753,6 +759,7 @@ public class MainController {
         apptCtrl.apptHeader.setText("Update Appointment ID " + editingAppt.get("appointment_id"));
         String customer_name = db.getCustomerNameById(editingAppt.get("customer_id"));
         apptCtrl.setContactValue(editingAppt.get("contact_id"));
+        apptCtrl.setUserValue(editingAppt.get("user_id"));
         apptCtrl.setCustomerValue(customer_name);
         apptCtrl.setStartAndFinish(editingAppt.get("start"), editingAppt.get("end"));
         apptCtrl.setUser(hiddenUserIdLabel.getText(),hiddenUsernameLabel.getText());
@@ -777,6 +784,10 @@ public class MainController {
         boolean deleted = db.deleteApptById(selectedAppt.getId());
         if (deleted) {
             updateApptsTable();
+            Alert a = new Alert(Alert.AlertType.INFORMATION);
+            a.setContentText("Appointment ID " + selectedAppt.getId() + " of type " + editingAppt.get("type") + " successfully deleted.");
+            ((Stage) a.getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
+            a.show();
         }
     }
 

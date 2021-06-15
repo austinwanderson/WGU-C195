@@ -114,15 +114,23 @@ public class SqlDriver {
      * @exception SQLException db error
      */
     public Boolean checkValidApptTime(String customerId, ZonedDateTime start, ZonedDateTime finish, String apptId) throws SQLException {
+        start = start.plusMinutes(1).withZoneSameInstant(ZoneId.of("+0"));
+        finish = finish.minusMinutes(1).withZoneSameInstant(ZoneId.of("+0"));
         String st = start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String ft = finish.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        System.out.println(st);
+        System.out.println(ft);
         Statement apptQuery = null;
         ResultSet results = null;
         String query = "select * from appointments where customer_id = '" + customerId + "' and " +
-                "start between '" + st + "' and '" + ft + "' and end between '" + st + "' and '" + ft + "';";
+                "start between '" + st + "' and '" + ft + "' or end between '" + st + "' and '" + ft + "';";
         apptQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         results = apptQuery.executeQuery(query);
         while (results.next()) {
+            System.out.println(results.getString("appointment_id"));
+            System.out.println(results.getString("customer_id"));
+            System.out.println(results.getString("start"));
+            System.out.println(results.getString("end"));
             if (!results.getString("appointment_id").equals(apptId)) {
                 return false;
             }
@@ -147,6 +155,25 @@ public class SqlDriver {
             contacts.add(n);
         }
         return contacts;
+    }
+
+    /**
+     * Returns a list of contacts
+     *
+     * @return ObservableList list of contacts.
+     * @exception SQLException db error
+     */
+    public ObservableList<String[]> getUsers() throws SQLException {
+        Statement userQuery = null;
+        ResultSet results = null;
+        ObservableList<String[]> users = FXCollections.observableArrayList();
+        userQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+        results = userQuery.executeQuery("select * from users;");
+        while (results.next()) {
+            String[] n = {results.getString("user_id"), results.getString("user_name")};
+            users.add(n);
+        }
+        return users;
     }
 
     /**
@@ -292,6 +319,8 @@ public class SqlDriver {
         String now = Instant.now().atZone(ZoneId.of("+0")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         int newAppt;
         try {
+            System.out.println(appointment.getCreatedById());
+            System.out.println(appointment.getUpdatedById());
             String query = "update appointments set title = '" + appointment.getTitle() + "', description = '" + appointment.getDescription() +
                     "', location = '" + appointment.getLocation() + "', type = '" + appointment.getType() + "', start = '" + appointment.getStartDateTime() +
                     "', end = '" + appointment.getEndDateTime() + "', last_update = '" + now + "', last_updated_by = '" + appointment.getCreatedById() +
@@ -496,7 +525,12 @@ public class SqlDriver {
         int j = 0;
         LocalDate currentDay = f;
         while (results.next()) {
-            LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            //LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            //ZonedDateTime st = ZonedDateTime.parse(results.getString("start") +
+            //        " Z", DateTimeFormatter.ofPattern("yyyy-MM-dd X")).withZoneSameInstant(ZoneId.systemDefault());
+            DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+            ZonedDateTime st = ZonedDateTime.parse(results.getString("start") + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+            LocalDate startDay = st.toLocalDate();
             if (startDay.equals(currentDay)) {
                 appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
                         results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
@@ -525,11 +559,12 @@ public class SqlDriver {
 
 
     /**
-     * Handles verifying login credentials
+     * Returns all appointments in a specified month.
      *
-     * @param username given username
-     * @param password given password
-     * @return boolean true if credentials are accepted.
+     * @param f first day of month
+     * @param l last day of month
+     * @param lengthOfMonth length of month in days
+     * @return Map appts for the month.
      * @exception SQLException db error
      */
     public Map<Integer, List<String[]>> getApptsByMonth(LocalDate f, LocalDate l, int lengthOfMonth) throws SQLException {
@@ -537,6 +572,10 @@ public class SqlDriver {
         Map<Integer, List<String[]>> data = new HashMap<Integer, List<String[]>>();
         Statement apptsQuery = null;
         ResultSet results = null;
+        int month = f.getMonthValue();
+        LocalDate currentDay = f;
+        f = f.minusDays(1);
+        l = l.plusDays(1);
         apptsQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         String query = "select * from appointments inner join customers on appointments.customer_id" +
                 " = customers.customer_id inner join contacts on appointments.contact_id = contacts.contact_id" +
@@ -544,22 +583,26 @@ public class SqlDriver {
         results = apptsQuery.executeQuery(query);
         int i = 0;
         int j = 0;
-        LocalDate currentDay = f;
+
         while (results.next()) {
-            LocalDate startDay = LocalDate.parse(results.getString("start").substring(0,10), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            if (startDay.equals(currentDay)) {
-                appointments.add(i,new String[]{results.getString("start"),results.getString("appointment_id"), results.getString("title"),
-                        results.getString("description"),results.getString("location"),results.getString("type"),results.getString("end"),
-                        results.getString("customer_name"),results.getString("contact_name"),results.getString("email"),results.getString("customer_id"),
-                        results.getString("contact_id")});
-                i += 1;
-            } else {
-                data.put(j, appointments);
-                currentDay = currentDay.plusDays(1);
-                appointments = new ArrayList<String[]>();
-                results.previous();
-                i = 0;
-                j += 1;
+            DateTimeFormatter frmt = DateTimeFormatter.ofPattern("yyyy-MM-dd kk:mm:ss z");
+            ZonedDateTime st = ZonedDateTime.parse(results.getString("start") + " UTC", frmt).withZoneSameInstant(ZoneId.systemDefault());
+            LocalDate startDay = st.toLocalDate();
+            if (startDay.getMonthValue() == month) {
+                if (startDay.equals(currentDay)) {
+                    appointments.add(i, new String[]{results.getString("start"), results.getString("appointment_id"), results.getString("title"),
+                            results.getString("description"), results.getString("location"), results.getString("type"), results.getString("end"),
+                            results.getString("customer_name"), results.getString("contact_name"), results.getString("email"), results.getString("customer_id"),
+                            results.getString("contact_id")});
+                    i += 1;
+                } else {
+                    data.put(j, appointments);
+                    currentDay = currentDay.plusDays(1);
+                    appointments = new ArrayList<String[]>();
+                    results.previous();
+                    i = 0;
+                    j += 1;
+                }
             }
         }
         data.put(j, appointments);
