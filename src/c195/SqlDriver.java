@@ -114,25 +114,19 @@ public class SqlDriver {
      * @exception SQLException db error
      */
     public Boolean checkValidApptTime(String customerId, ZonedDateTime start, ZonedDateTime finish, String apptId) throws SQLException {
-        start = start.plusMinutes(1).withZoneSameInstant(ZoneId.of("+0"));
-        finish = finish.minusMinutes(1).withZoneSameInstant(ZoneId.of("+0"));
+        start = start.withZoneSameInstant(ZoneId.of("+0"));
+        finish = finish.withZoneSameInstant(ZoneId.of("+0"));
         String st = start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String ft = finish.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        System.out.println(st);
-        System.out.println(ft);
         Statement apptQuery = null;
         ResultSet results = null;
-        String query = "select * from appointments where customer_id = '" + customerId + "' and " +
-                "start between '" + st + "' and '" + ft + "' or end between '" + st + "' and '" + ft + "';";
+        String query = "select * from appointments where customer_id = '" + customerId + "' and (" +
+                "start between '" + st + "' and '" + ft + "' or end between '" + st + "' and '" + ft + "');";
         apptQuery = this.db.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         results = apptQuery.executeQuery(query);
         while (results.next()) {
-            System.out.println(results.getString("appointment_id"));
-            System.out.println(results.getString("customer_id"));
-            System.out.println(results.getString("start"));
-            System.out.println(results.getString("end"));
             if (!results.getString("appointment_id").equals(apptId)) {
-                return false;
+                if (!results.getString("start").equals(ft) && !results.getString("end").equals(st)) return false;
             }
         }
         return true;
